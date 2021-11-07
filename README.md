@@ -184,7 +184,7 @@ new Algorithm(alg);
     - Prime characters (`'`, `’` and `′`) will be converted to `'`.
     - Double prime turns (`2'` or `'2`) will be converted to `2`.
     - Wide move notation with `w` will be converted to lowercase (e.g. `Fw` becomes `f`).
-    - Parantheses without multiplier will be removed (e.g. `F (R U R' U') F')` becomes `F R U R' U' F')`).
+    - Parantheses without multiplier will be removed (e.g. `F (R U R' U') F'` becomes `F R U R' U' F'`).
     - Asterisks before multipliers will be removed (e.g. `(M U)*4` becomes `(M U)4`).
   - Throws a descriptive error when the string is invalid.
 
