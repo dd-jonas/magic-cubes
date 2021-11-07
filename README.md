@@ -2,6 +2,14 @@
 
 JavaScript library for simulating the Rubik's cube and working with algorithms.
 
+## Table of Contents
+
+- [Installation](#installation)
+- [Usage](#usage)
+- [API Reference](#api-reference)
+- [Roadmap](#roadmap)
+- [License](#license)
+
 ## Installation
 
 #### npm
