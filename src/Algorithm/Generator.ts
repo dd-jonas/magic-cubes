@@ -11,7 +11,7 @@ import {
   TurnNode,
 } from './Parser';
 
-export class Generator {
+class Generator {
   private ast: AST;
   algorithm = '';
 
@@ -84,3 +84,10 @@ export class Generator {
     this.algorithm = this.generateFromNode(this.ast);
   }
 }
+
+export const generate = (ast: AST) => {
+  const generator = new Generator(ast);
+  generator.run();
+
+  return generator.algorithm;
+};

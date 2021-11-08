@@ -1,22 +1,18 @@
-import { Lexer, TokenTypes } from '../Lexer';
+import { lex, TokenTypes } from '../Lexer';
 
 describe('Lexer', () => {
   it('scans an empty string', () => {
     const input = '';
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([]);
+    expect(tokens).toEqual([]);
   });
 
   it('scans a sequence', () => {
     const input = "R U R' U R U2 R'";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.Turn, value: "R'" },
@@ -29,11 +25,9 @@ describe('Lexer', () => {
 
   it('scans a conjugate', () => {
     const input = "[R U R': D2]";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -46,11 +40,9 @@ describe('Lexer', () => {
 
   it('scans a commutator', () => {
     const input = "[R U R', D2]";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -63,11 +55,9 @@ describe('Lexer', () => {
 
   it('scans a repeating group', () => {
     const input = "(R U R' U')6";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -80,11 +70,9 @@ describe('Lexer', () => {
 
   it('scans a complex algorithm (conjugate with nested commutator)', () => {
     const input = "[z': [R U' R', D']]";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "z'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -101,11 +89,9 @@ describe('Lexer', () => {
 
   it('scans a complex algorithm (multiple conjugates)', () => {
     const input = "[U': [R D' R': U] [D' R D R': U']]";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "U'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -130,11 +116,9 @@ describe('Lexer', () => {
 
   it('scans a complex algorithm (nested repeating group)', () => {
     const input = "[M': (U M' U M)2]";
-    const lexer = new Lexer(input);
+    const tokens = lex(input);
 
-    lexer.run();
-
-    expect(lexer.tokens).toEqual([
+    expect(tokens).toEqual([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "M'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -151,58 +135,50 @@ describe('Lexer', () => {
 
   it('allows outer layer turns', () => {
     const input = "U F' R2 D B' L2";
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows wide layer turns', () => {
     const input = "u f' r2 d b' l2";
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows slice layer turns', () => {
     const input = "M E' S2";
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows rotations', () => {
     const input = "x y' z2";
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows commutators and conjugate notation', () => {
     const input = '[:,]';
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows repeating group notation', () => {
     const input = '()4';
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('allows whitespace characters', () => {
     const input = ' \f\n\r\t\v';
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).not.toThrow();
+    expect(() => lex(input)).not.toThrow();
   });
 
   it('throws when encountering an invalid character', () => {
     const input = "R U R' ?";
-    const lexer = new Lexer(input);
 
-    expect(() => lexer.run()).toThrowError(
+    expect(() => lex(input)).toThrowError(
       "Invalid character '?' at position 8."
     );
   });

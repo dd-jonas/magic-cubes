@@ -1,6 +1,6 @@
 import { AST, Direction, NodeTypes } from '../Parser';
-import { Traverser } from '../Traverser';
-import { Visitor } from '../Visitors';
+import { traverse } from '../Traverser';
+import { Visitor } from '../visitors';
 
 describe('Traverser', () => {
   const order: Array<NodeTypes> = [];
@@ -100,9 +100,7 @@ describe('Traverser', () => {
       }),
     };
 
-    const traverser = new Traverser(ast, visitor);
-
-    traverser.run();
+    traverse(ast, visitor);
 
     expect(order).toEqual([
       NodeTypes.Turn,

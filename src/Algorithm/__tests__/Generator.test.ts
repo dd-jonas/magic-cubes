@@ -1,17 +1,15 @@
-import { Generator } from '../Generator';
+import { generate } from '../Generator';
 import { Direction, NodeTypes } from '../Parser';
 
 describe('Generator', () => {
   it('generates an empty algorithm', () => {
-    const generator = new Generator({ type: NodeTypes.Algorithm, body: [] });
+    const algorithm = generate({ type: NodeTypes.Algorithm, body: [] });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual('');
+    expect(algorithm).toEqual('');
   });
 
   it('generates a sequence', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -29,13 +27,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("R U R' U R U2 R'");
+    expect(algorithm).toEqual("R U R' U R U2 R'");
   });
 
   it('generates a conjugate', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -66,13 +62,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("[R U R': D2]");
+    expect(algorithm).toEqual("[R U R': D2]");
   });
 
   it('generates a commutator', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -103,13 +97,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("[R U R', D2]");
+    expect(algorithm).toEqual("[R U R', D2]");
   });
 
   it('generates a repeating group', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -130,13 +122,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("(R U R' U')6");
+    expect(algorithm).toEqual("(R U R' U')6");
   });
 
   it('generates a complex algorithm (conjugate with nested commutator)', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -192,13 +182,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("[z': [R U' R', D']]");
+    expect(algorithm).toEqual("[z': [R U' R', D']]");
   });
 
   it('generates a complex algorithm (multiple conjugates)', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -296,13 +284,11 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("[U': [R D' R': U] [D' R D R': U']]");
+    expect(algorithm).toEqual("[U': [R D' R': U] [D' R D R': U']]");
   });
 
   it('generates a complex algorithm (nested repeating group)', () => {
-    const generator = new Generator({
+    const algorithm = generate({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -352,8 +338,6 @@ describe('Generator', () => {
       ],
     });
 
-    generator.run();
-
-    expect(generator.algorithm).toEqual("[M': (U M' U M)2]");
+    expect(algorithm).toEqual("[M': (U M' U M)2]");
   });
 });

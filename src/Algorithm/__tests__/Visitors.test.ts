@@ -1,6 +1,5 @@
 import { AST, Direction, NodeTypes } from '../Parser';
-import { Traverser } from '../Traverser';
-import { Cleaner, Sequencer, Validator } from '../Visitors';
+import { clean, sequence, validate } from '../Traverser';
 
 describe('Cleaner visitor', () => {
   it('does nothing when the input is already clean', () => {
@@ -75,11 +74,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual(ast);
+    expect(cleaned).toEqual(ast);
   });
 
   it('sorts parallel turns', () => {
@@ -100,11 +97,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(cleaned).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -145,11 +140,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(cleaned).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -182,11 +175,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    expect(cleaned).toEqual({ type: NodeTypes.Algorithm, body: [] });
   });
 
   it('rearranges the algorithm when the conjugate setup cancels with the commutator interchange', () => {
@@ -370,15 +361,11 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser1 = new Traverser(ast1, Cleaner);
-    const traverser2 = new Traverser(ast2, Cleaner);
-    const traverser3 = new Traverser(ast3, Cleaner);
+    const cleaned1 = clean(ast1);
+    const cleaned2 = clean(ast2);
+    const cleaned3 = clean(ast3);
 
-    traverser1.run();
-    traverser2.run();
-    traverser3.run();
-
-    expect(traverser1.ast).toEqual({
+    expect(cleaned1).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -438,7 +425,7 @@ describe('Cleaner visitor', () => {
       ],
     });
 
-    expect(traverser2.ast).toEqual({
+    expect(cleaned2).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -494,7 +481,7 @@ describe('Cleaner visitor', () => {
       ],
     });
 
-    expect(traverser3.ast).toEqual({
+    expect(cleaned3).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -575,11 +562,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    expect(cleaned).toEqual({ type: NodeTypes.Algorithm, body: [] });
   });
 
   it('flattens repeating groups with multiplier 1', () => {
@@ -628,11 +613,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(cleaned).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -681,11 +664,9 @@ describe('Cleaner visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Cleaner);
+    const cleaned = clean(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(cleaned).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -723,11 +704,8 @@ describe('Validator visitor', () => {
       ],
     };
 
-    const traverser1 = new Traverser(ast1, Validator);
-    const traverser2 = new Traverser(ast2, Validator);
-
-    expect(() => traverser1.run()).not.toThrow();
-    expect(() => traverser2.run()).toThrow();
+    expect(() => validate(ast1)).not.toThrow();
+    expect(() => validate(ast2)).toThrow();
   });
 });
 
@@ -748,11 +726,9 @@ describe('Sequencer visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Sequencer);
+    const sequenced = sequence(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual(ast);
+    expect(sequenced).toEqual(ast);
   });
 
   it('flattens multiple sequences', () => {
@@ -776,11 +752,9 @@ describe('Sequencer visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Sequencer);
+    const sequenced = sequence(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(sequenced).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -859,11 +833,9 @@ describe('Sequencer visitor', () => {
       ],
     };
 
-    const traverser = new Traverser(ast, Sequencer);
+    const sequenced = sequence(ast);
 
-    traverser.run();
-
-    expect(traverser.ast).toEqual({
+    expect(sequenced).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {

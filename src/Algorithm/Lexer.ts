@@ -22,7 +22,7 @@ export type Grammar = Readonly<
   }[]
 >;
 
-export class Lexer {
+class Lexer {
   private cursor = 0;
   private regex: RegExp;
   private grammar: Grammar = [
@@ -117,3 +117,10 @@ export class Lexer {
     }
   }
 }
+
+export const lex = (input: string) => {
+  const lexer = new Lexer(input);
+  lexer.run();
+
+  return lexer.tokens;
+};

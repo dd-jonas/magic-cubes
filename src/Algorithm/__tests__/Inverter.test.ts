@@ -1,17 +1,15 @@
-import { Inverter } from '../Inverter';
+import { invert } from '../Inverter';
 import { Direction, NodeTypes } from '../Parser';
 
 describe('Inverter', () => {
   it('inverts an empty algorithm', () => {
-    const inverter = new Inverter({ type: NodeTypes.Algorithm, body: [] });
+    const inverse = invert({ type: NodeTypes.Algorithm, body: [] });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    expect(inverse).toEqual({ type: NodeTypes.Algorithm, body: [] });
   });
 
   it('inverts a sequence', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -29,9 +27,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -51,7 +47,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a conjugate', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -82,9 +78,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -117,7 +111,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a commutator', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -148,9 +142,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -183,7 +175,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a repeating group', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -204,9 +196,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -229,7 +219,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (conjugate with nested commutator)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -285,9 +275,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -345,7 +333,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (multiple conjugates)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -443,9 +431,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -545,7 +531,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (nested repeating group)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -595,9 +581,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {

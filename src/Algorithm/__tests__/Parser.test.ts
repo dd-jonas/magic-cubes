@@ -1,17 +1,15 @@
 import { TokenTypes } from '../Lexer';
-import { Direction, NodeTypes, Parser } from '../Parser';
+import { Direction, NodeTypes, parse } from '../Parser';
 
 describe('Parser', () => {
   it('parses an empty token list', () => {
-    const parser = new Parser([]);
+    const ast = parse([]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    expect(ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
   });
 
   it('parses a sequence', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.Turn, value: "R'" },
@@ -21,9 +19,7 @@ describe('Parser', () => {
       { type: TokenTypes.Turn, value: "R'" },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -43,7 +39,7 @@ describe('Parser', () => {
   });
 
   it('parses a conjugate', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -53,9 +49,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -88,7 +82,7 @@ describe('Parser', () => {
   });
 
   it('parses a commutator', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -98,9 +92,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -133,7 +125,7 @@ describe('Parser', () => {
   });
 
   it('parses a repeating group', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -143,9 +135,7 @@ describe('Parser', () => {
       { type: TokenTypes.Multiplier, value: '6' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -168,7 +158,7 @@ describe('Parser', () => {
   });
 
   it('parses complex algorithm (conjugate with nested commutator)', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "z'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -182,9 +172,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -242,7 +230,7 @@ describe('Parser', () => {
   });
 
   it('parses a complex algorithm (multiple conjugates)', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "U'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -264,9 +252,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -366,7 +352,7 @@ describe('Parser', () => {
   });
 
   it('parses a complex algorithm (nested repeating group)', () => {
-    const parser = new Parser([
+    const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "M'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -380,9 +366,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    parser.run();
-
-    expect(parser.ast).toEqual({
+    expect(ast).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -434,91 +418,91 @@ describe('Parser', () => {
   });
 
   it('throws when encountering unbalanced brackets', () => {
-    const parser1 = new Parser([
+    const tokens1 = [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'U' },
-    ]);
+    ];
 
-    const parser2 = new Parser([
+    const tokens2 = [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
       { type: TokenTypes.Turn, value: 'D' },
-    ]);
+    ];
 
-    const parser3 = new Parser([
+    const tokens3 = [
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.SeperatorCommutator, value: ',' },
       { type: TokenTypes.Turn, value: 'D' },
       { type: TokenTypes.BracketClose, value: ']' },
-    ]);
+    ];
 
-    const parser4 = new Parser([
+    const tokens4 = [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.Turn, value: 'D' },
       { type: TokenTypes.BracketClose, value: ']' },
-    ]);
+    ];
 
-    const parser5 = new Parser([
+    const tokens5 = [
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.Turn, value: 'U' },
-    ]);
+    ];
 
-    const parser6 = new Parser([
+    const tokens6 = [
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.ParenthesisClose, value: ')' },
       { type: TokenTypes.Multiplier, value: '2' },
-    ]);
+    ];
 
-    expect(() => parser1.run()).toThrow('Unexpected end of input.');
-    expect(() => parser2.run()).toThrow('Unexpected end of input.');
-    expect(() => parser3.run()).toThrow('Unexpected token , at position 2.');
-    expect(() => parser4.run()).toThrow(
+    expect(() => parse(tokens1)).toThrow('Unexpected end of input.');
+    expect(() => parse(tokens2)).toThrow('Unexpected end of input.');
+    expect(() => parse(tokens3)).toThrow('Unexpected token , at position 2.');
+    expect(() => parse(tokens4)).toThrow(
       'Missing seperator : or , inside brackets.'
     );
-    expect(() => parser5.run()).toThrow('Unexpected end of input.');
-    expect(() => parser6.run()).toThrow('Unexpected token ) at position 2.');
+    expect(() => parse(tokens5)).toThrow('Unexpected end of input.');
+    expect(() => parse(tokens6)).toThrow('Unexpected token ) at position 2.');
   });
 
   it('throws when encountering en empty part', () => {
-    const parser1 = new Parser([
+    const tokens1 = [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.BracketClose, value: ']' },
-    ]);
+    ];
 
-    const parser2 = new Parser([
+    const tokens2 = [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.SeperatorCommutator, value: ',' },
       { type: TokenTypes.BracketClose, value: ']' },
-    ]);
+    ];
 
-    const parser3 = new Parser([
+    const tokens3 = [
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.ParenthesisClose, value: ')' },
       { type: TokenTypes.Multiplier, value: '2' },
-    ]);
+    ];
 
-    expect(() => parser1.run()).toThrow(
+    expect(() => parse(tokens1)).toThrow(
       "Left side of conjugate can't be empty."
     );
-    expect(() => parser2.run()).toThrow(
+    expect(() => parse(tokens2)).toThrow(
       "Right side of commutator can't be empty."
     );
-    expect(() => parser3.run()).toThrow("Repeating group can't be empty.");
+    expect(() => parse(tokens3)).toThrow("Repeating group can't be empty.");
   });
 
   it('throws when encountering missing multiplier', () => {
-    const parser = new Parser([
+    const tokens = [
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.ParenthesisClose, value: ')' },
-    ]);
+    ];
 
-    expect(() => parser.run()).toThrow(
+    expect(() => parse(tokens)).toThrow(
       'Repeating group must be followed by a multiplier.'
     );
   });

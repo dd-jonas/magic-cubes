@@ -1,31 +1,8 @@
-import {
-  AlgorithmNode,
-  CommutatorNode,
-  ConjugateNode,
-  Node,
-  NodeTypes,
-  RepeatingNode,
-  SequenceNode,
-  TurnNode,
-} from './Parser';
-import { Turn } from './Turn';
+import { NodeTypes, SequenceNode, TurnNode } from '../Parser';
+import { Turn } from '../Turn';
+import { Visitor } from './Visitor';
 
-type VisitorFn<T extends Node> = (node: T) => Node | Node[] | null;
-
-export type Visitor = Readonly<{
-  [NodeTypes.Turn]: VisitorFn<TurnNode>;
-  [NodeTypes.Sequence]: VisitorFn<SequenceNode>;
-  [NodeTypes.Conjugate]: VisitorFn<ConjugateNode>;
-  [NodeTypes.Commutator]: VisitorFn<CommutatorNode>;
-  [NodeTypes.Repeating]: VisitorFn<RepeatingNode>;
-  [NodeTypes.Algorithm]: (node: AlgorithmNode) => AlgorithmNode;
-}>;
-
-/**
- * Cleaner
- */
-
-export const Cleaner: Visitor = {
+export const cleaner: Visitor = {
   [NodeTypes.Turn]: (node) => node,
 
   [NodeTypes.Sequence]: (node) => {
@@ -208,81 +185,4 @@ export const Cleaner: Visitor = {
   },
 
   [NodeTypes.Algorithm]: (node) => node,
-};
-
-/**
- * Validator
- */
-
-export const Validator: Visitor = {
-  [NodeTypes.Turn]: (node) => node,
-
-  [NodeTypes.Sequence]: (node) => node,
-
-  [NodeTypes.Conjugate]: (node) => node,
-
-  [NodeTypes.Commutator]: (node) => node,
-
-  [NodeTypes.Repeating]: (node) => {
-    if (node.multiplier > 6) {
-      throw new Error("Multiplier can't be higher than 6.");
-    }
-
-    return node;
-  },
-
-  [NodeTypes.Algorithm]: (node) => node,
-};
-
-/**
- * Sequencer
- */
-
-const invertSequence = (node: SequenceNode): SequenceNode => {
-  return {
-    type: NodeTypes.Sequence,
-    turns: [...node.turns].reverse().map((turn) => Turn.invert(turn)),
-  };
-};
-
-export const Sequencer: Visitor = {
-  [NodeTypes.Turn]: (node) => node,
-
-  [NodeTypes.Sequence]: (node) => node,
-
-  [NodeTypes.Conjugate]: (node) => {
-    return [
-      ...node.A,
-      ...node.B,
-      ...node.A.map((node) => invertSequence(node as SequenceNode)),
-    ];
-  },
-
-  [NodeTypes.Commutator]: (node) => {
-    return [
-      ...node.A,
-      ...node.B,
-      ...node.A.map((node) => invertSequence(node as SequenceNode)),
-      ...node.B.map((node) => invertSequence(node as SequenceNode)),
-    ];
-  },
-
-  [NodeTypes.Repeating]: (node) => {
-    return [...new Array(node.multiplier)].flatMap(() => node.multiplicand);
-  },
-
-  [NodeTypes.Algorithm]: (node) => {
-    return {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: node.body.reduce(
-            (acc, node) => [...acc, ...(node as SequenceNode).turns],
-            <TurnNode[]>[]
-          ),
-        },
-      ],
-    };
-  },
 };

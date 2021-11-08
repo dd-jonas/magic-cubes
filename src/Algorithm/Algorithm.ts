@@ -1,9 +1,8 @@
-import { Generator } from './Generator';
-import { Inverter } from './Inverter';
-import { Lexer, Token } from './Lexer';
-import { AlgorithmNode, AST, Parser, SequenceNode, TurnNode } from './Parser';
-import { Traverser } from './Traverser';
-import { Cleaner, Sequencer, Validator } from './Visitors';
+import { generate } from './Generator';
+import { invert } from './Inverter';
+import { lex } from './Lexer';
+import { AST, parse, SequenceNode, TurnNode } from './Parser';
+import { clean, sequence, validate } from './Traverser';
 
 export class Algorithm {
   readonly raw: string;
@@ -12,10 +11,10 @@ export class Algorithm {
   constructor(alg: string) {
     this.ensureMaxLength(alg);
 
-    const tokens = this.tokenize(this.normalize(alg));
-    const ast = this.parse(tokens);
+    const tokens = lex(this.normalize(alg));
+    const ast = parse(tokens);
 
-    this.validateAST(ast);
+    validate(ast);
 
     this.raw = alg;
     this.ast = ast;
@@ -24,20 +23,20 @@ export class Algorithm {
   }
 
   get clean(): string {
-    const clean = this.cleanAST(this.ast);
-    return this.getStringFromAST(clean);
+    const cleaned = clean(this.ast);
+    return generate(cleaned);
   }
 
   get inverse(): string {
-    const inverse = this.invertAST(this.ast);
-    const clean = this.cleanAST(inverse);
-    return this.getStringFromAST(clean);
+    const inversed = invert(this.ast);
+    const cleaned = clean(inversed);
+    return generate(cleaned);
   }
 
   get turns(): TurnNode[] {
-    const sequence = this.sequenceAST(this.ast);
-    const clean = this.cleanAST(sequence);
-    return (clean.body[0] as SequenceNode).turns;
+    const sequenced = sequence(this.ast);
+    const cleaned = clean(sequenced);
+    return (cleaned.body[0] as SequenceNode).turns;
   }
 
   /**
@@ -68,63 +67,5 @@ export class Algorithm {
         ${alg.slice(0, 32)}... (length: ${alg.length})`
       );
     }
-  }
-
-  //
-  // Wrappers
-  //
-
-  /** Tokenize an algorithm */
-  private tokenize(input: string) {
-    const lexer = new Lexer(input);
-    lexer.run();
-
-    return lexer.tokens;
-  }
-
-  /** Parse an array of algorithm tokens */
-  private parse(tokens: Token[]) {
-    const parser = new Parser(tokens);
-    parser.run();
-
-    return parser.ast;
-  }
-
-  /** Traverse the AST with the Cleaner visitor */
-  private cleanAST(ast: AlgorithmNode) {
-    const cleaner = new Traverser(ast, Cleaner);
-    cleaner.run();
-
-    return cleaner.ast;
-  }
-
-  /** Traverse the AST with the Validator visitor  */
-  private validateAST(ast: AlgorithmNode) {
-    const validator = new Traverser(ast, Validator);
-    validator.run();
-  }
-
-  /** Traverse the AST with the Inverter  */
-  private invertAST(ast: AlgorithmNode) {
-    const inverter = new Inverter(ast);
-    inverter.run();
-
-    return inverter.ast;
-  }
-
-  /** Traverse the AST with the Sequencer visitor */
-  private sequenceAST(ast: AlgorithmNode) {
-    const sequencer = new Traverser(ast, Sequencer);
-    sequencer.run();
-
-    return sequencer.ast;
-  }
-
-  /** Generate a string from an algorithm AST */
-  private getStringFromAST(ast: AlgorithmNode) {
-    const generator = new Generator(ast);
-    generator.run();
-
-    return generator.algorithm;
   }
 }

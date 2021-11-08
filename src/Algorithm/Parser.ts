@@ -66,7 +66,7 @@ export type Node =
 export type ParseError = { index: number; message?: string };
 export type AST = AlgorithmNode;
 
-export class Parser {
+class Parser {
   private index = 0;
   private tokens: Token[];
   private errors: ParseError[] = [];
@@ -328,3 +328,10 @@ export class Parser {
     }
   }
 }
+
+export const parse = (tokens: Token[]) => {
+  const parser = new Parser(tokens);
+  parser.run();
+
+  return parser.ast;
+};
