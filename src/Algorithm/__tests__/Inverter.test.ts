@@ -1,5 +1,8 @@
 import { invert } from '../Inverter';
 import { Direction, NodeTypes } from '../Parser';
+import { turn } from '../Turn';
+
+const { CW, CCW, Double } = Direction;
 
 describe('Inverter', () => {
   it('inverts an empty algorithm', () => {
@@ -15,13 +18,13 @@ describe('Inverter', () => {
         {
           type: NodeTypes.Sequence,
           turns: [
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.Double },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+            turn('R', CW),
+            turn('U', CW),
+            turn('R', CCW),
+            turn('U', CW),
+            turn('R', CW),
+            turn('U', Double),
+            turn('R', CCW),
           ],
         },
       ],
@@ -33,13 +36,13 @@ describe('Inverter', () => {
         {
           type: NodeTypes.Sequence,
           turns: [
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.Double },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+            turn('R', CW),
+            turn('U', Double),
+            turn('R', CCW),
+            turn('U', CCW),
+            turn('R', CW),
+            turn('U', CCW),
+            turn('R', CCW),
           ],
         },
       ],
@@ -55,23 +58,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -86,23 +79,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -119,23 +102,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -150,23 +123,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
         },
@@ -184,10 +147,10 @@ describe('Inverter', () => {
             {
               type: NodeTypes.Sequence,
               turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
+                turn('R', CW),
+                turn('U', CW),
+                turn('R', CCW),
+                turn('U', CCW),
               ],
             },
           ],
@@ -205,10 +168,10 @@ describe('Inverter', () => {
             {
               type: NodeTypes.Sequence,
               turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+                turn('U', CW),
+                turn('R', CW),
+                turn('U', CCW),
+                turn('R', CCW),
               ],
             },
           ],
@@ -227,9 +190,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -238,35 +199,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
             },
@@ -283,9 +222,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -294,35 +231,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
                 },
               ],
             },
@@ -341,9 +256,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-              ],
+              turns: [turn('U', CCW)],
             },
           ],
           B: [
@@ -352,35 +265,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                  ],
+                  turns: [turn('U', CW)],
                 },
               ],
             },
@@ -390,39 +281,17 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
+                    turn('D', CCW),
+                    turn('R', CW),
+                    turn('D', CW),
+                    turn('R', CCW),
                   ],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('U', CCW)],
                 },
               ],
             },
@@ -439,9 +308,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-              ],
+              turns: [turn('U', CCW)],
             },
           ],
           B: [
@@ -451,39 +318,17 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
+                    turn('D', CCW),
+                    turn('R', CW),
+                    turn('D', CW),
+                    turn('R', CCW),
                   ],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                  ],
+                  turns: [turn('U', CW)],
                 },
               ],
             },
@@ -492,35 +337,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('U', CCW)],
                 },
               ],
             },
@@ -539,9 +362,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'M', direction: Direction.CCW },
-              ],
+              turns: [turn('M', CCW)],
             },
           ],
           B: [
@@ -551,26 +372,10 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CW,
-                    },
+                    turn('U', CW),
+                    turn('M', CCW),
+                    turn('U', CW),
+                    turn('M', CW),
                   ],
                 },
               ],
@@ -589,9 +394,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'M', direction: Direction.CCW },
-              ],
+              turns: [turn('M', CCW)],
             },
           ],
           B: [
@@ -601,26 +404,10 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
+                    turn('M', CCW),
+                    turn('U', CCW),
+                    turn('M', CW),
+                    turn('U', CCW),
                   ],
                 },
               ],

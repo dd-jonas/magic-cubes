@@ -1,6 +1,9 @@
 import { AST, Direction, NodeTypes } from '../Parser';
 import { traverse } from '../Traverser';
+import { turn } from '../Turn';
 import { Visitor } from '../visitors';
+
+const { CW, CCW } = Direction;
 
 describe('Traverser', () => {
   const order: Array<NodeTypes> = [];
@@ -14,9 +17,7 @@ describe('Traverser', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -28,23 +29,7 @@ describe('Traverser', () => {
                   multiplicand: [
                     {
                       type: NodeTypes.Sequence,
-                      turns: [
-                        {
-                          type: NodeTypes.Turn,
-                          move: 'R',
-                          direction: Direction.CW,
-                        },
-                        {
-                          type: NodeTypes.Turn,
-                          move: 'U',
-                          direction: Direction.CW,
-                        },
-                        {
-                          type: NodeTypes.Turn,
-                          move: 'R',
-                          direction: Direction.CCW,
-                        },
-                      ],
+                      turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
                     },
                   ],
                   multiplier: 2,
@@ -53,13 +38,7 @@ describe('Traverser', () => {
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
             },

@@ -1,5 +1,8 @@
 import { generate } from '../Generator';
 import { Direction, NodeTypes } from '../Parser';
+import { turn } from '../Turn';
+
+const { CW, CCW, Double } = Direction;
 
 describe('Generator', () => {
   it('generates an empty algorithm', () => {
@@ -15,13 +18,13 @@ describe('Generator', () => {
         {
           type: NodeTypes.Sequence,
           turns: [
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.Double },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+            turn('R', CW),
+            turn('U', CW),
+            turn('R', CCW),
+            turn('U', CW),
+            turn('R', CW),
+            turn('U', Double),
+            turn('R', CCW),
           ],
         },
       ],
@@ -39,23 +42,13 @@ describe('Generator', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -74,23 +67,13 @@ describe('Generator', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -110,10 +93,10 @@ describe('Generator', () => {
             {
               type: NodeTypes.Sequence,
               turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
+                turn('R', CW),
+                turn('U', CW),
+                turn('R', CCW),
+                turn('U', CCW),
               ],
             },
           ],
@@ -134,9 +117,7 @@ describe('Generator', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -145,35 +126,13 @@ describe('Generator', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
             },
@@ -194,9 +153,7 @@ describe('Generator', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-              ],
+              turns: [turn('U', CCW)],
             },
           ],
           B: [
@@ -205,35 +162,13 @@ describe('Generator', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                  ],
+                  turns: [turn('U', CW)],
                 },
               ],
             },
@@ -243,39 +178,17 @@ describe('Generator', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
+                    turn('D', CCW),
+                    turn('R', CW),
+                    turn('D', CW),
+                    turn('R', CCW),
                   ],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('U', CCW)],
                 },
               ],
             },
@@ -296,9 +209,7 @@ describe('Generator', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'M', direction: Direction.CCW },
-              ],
+              turns: [turn('M', CCW)],
             },
           ],
           B: [
@@ -308,26 +219,10 @@ describe('Generator', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CW,
-                    },
+                    turn('U', CW),
+                    turn('M', CCW),
+                    turn('U', CW),
+                    turn('M', CW),
                   ],
                 },
               ],

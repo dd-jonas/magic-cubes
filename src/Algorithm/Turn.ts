@@ -33,15 +33,13 @@ export type RotationTurnNode = {
   direction: Direction;
 };
 
-const turn = (move: Move, direction: Direction): TurnNode => ({
+export const turn = (move: Move, direction: Direction): TurnNode => ({
   type: NodeTypes.Turn,
   move,
   direction,
 });
 
-const cw = Direction.CW;
-const ccw = Direction.CCW;
-const double = Direction.Double;
+const { CW, CCW, Double } = Direction;
 
 export class Turn {
   /**
@@ -52,61 +50,49 @@ export class Turn {
     Record<Direction, TurnNode[]>
   > = {
     u: {
-      [Direction.CW]: [turn('D', cw), turn('y', cw)],
-      [Direction.CCW]: [turn('D', ccw), turn('y', ccw)],
-      [Direction.Double]: [turn('D', double), turn('y', double)],
+      [CW]: [turn('D', CW), turn('y', CW)],
+      [CCW]: [turn('D', CCW), turn('y', CCW)],
+      [Double]: [turn('D', Double), turn('y', Double)],
     },
     f: {
-      [Direction.CW]: [turn('B', cw), turn('z', cw)],
-      [Direction.CCW]: [turn('B', ccw), turn('z', ccw)],
-      [Direction.Double]: [turn('B', double), turn('z', double)],
+      [CW]: [turn('B', CW), turn('z', CW)],
+      [CCW]: [turn('B', CCW), turn('z', CCW)],
+      [Double]: [turn('B', Double), turn('z', Double)],
     },
     r: {
-      [Direction.CW]: [turn('L', cw), turn('x', cw)],
-      [Direction.CCW]: [turn('L', ccw), turn('x', ccw)],
-      [Direction.Double]: [turn('L', double), turn('x', double)],
+      [CW]: [turn('L', CW), turn('x', CW)],
+      [CCW]: [turn('L', CCW), turn('x', CCW)],
+      [Double]: [turn('L', Double), turn('x', Double)],
     },
     d: {
-      [Direction.CW]: [turn('U', cw), turn('y', ccw)],
-      [Direction.CCW]: [turn('U', ccw), turn('y', cw)],
-      [Direction.Double]: [turn('U', double), turn('y', double)],
+      [CW]: [turn('U', CW), turn('y', CCW)],
+      [CCW]: [turn('U', CCW), turn('y', CW)],
+      [Double]: [turn('U', Double), turn('y', Double)],
     },
     b: {
-      [Direction.CW]: [turn('F', cw), turn('z', ccw)],
-      [Direction.CCW]: [turn('F', ccw), turn('z', cw)],
-      [Direction.Double]: [turn('F', double), turn('z', double)],
+      [CW]: [turn('F', CW), turn('z', CCW)],
+      [CCW]: [turn('F', CCW), turn('z', CW)],
+      [Double]: [turn('F', Double), turn('z', Double)],
     },
     l: {
-      [Direction.CW]: [turn('R', cw), turn('x', ccw)],
-      [Direction.CCW]: [turn('R', ccw), turn('x', cw)],
-      [Direction.Double]: [turn('R', double), turn('x', double)],
+      [CW]: [turn('R', CW), turn('x', CCW)],
+      [CCW]: [turn('R', CCW), turn('x', CW)],
+      [Double]: [turn('R', Double), turn('x', Double)],
     },
     M: {
-      [Direction.CW]: [turn('R', cw), turn('L', ccw), turn('x', ccw)],
-      [Direction.CCW]: [turn('R', ccw), turn('L', cw), turn('x', cw)],
-      [Direction.Double]: [
-        turn('R', double),
-        turn('L', double),
-        turn('x', double),
-      ],
+      [CW]: [turn('R', CW), turn('L', CCW), turn('x', CCW)],
+      [CCW]: [turn('R', CCW), turn('L', CW), turn('x', CW)],
+      [Double]: [turn('R', Double), turn('L', Double), turn('x', Double)],
     },
     E: {
-      [Direction.CW]: [turn('U', cw), turn('D', ccw), turn('y', ccw)],
-      [Direction.CCW]: [turn('U', ccw), turn('D', cw), turn('y', cw)],
-      [Direction.Double]: [
-        turn('U', double),
-        turn('D', double),
-        turn('y', double),
-      ],
+      [CW]: [turn('U', CW), turn('D', CCW), turn('y', CCW)],
+      [CCW]: [turn('U', CCW), turn('D', CW), turn('y', CW)],
+      [Double]: [turn('U', Double), turn('D', Double), turn('y', Double)],
     },
     S: {
-      [Direction.CW]: [turn('F', ccw), turn('B', cw), turn('z', cw)],
-      [Direction.CCW]: [turn('F', cw), turn('B', ccw), turn('z', ccw)],
-      [Direction.Double]: [
-        turn('F', double),
-        turn('B', double),
-        turn('z', double),
-      ],
+      [CW]: [turn('F', CCW), turn('B', CW), turn('z', CW)],
+      [CCW]: [turn('F', CW), turn('B', CCW), turn('z', CCW)],
+      [Double]: [turn('F', Double), turn('B', Double), turn('z', Double)],
     },
   };
 
@@ -130,7 +116,7 @@ export class Turn {
       : { type: NodeTypes.Turn, move: turn.move, direction: newDirection };
   }
 
-  static invert(turn: TurnNode): TurnNode {
+  static invert<T extends TurnNode>(turn: T): T {
     return {
       ...turn,
       direction:
