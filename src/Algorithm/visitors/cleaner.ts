@@ -1,67 +1,103 @@
+import { Orientation } from '../../utils/Orientation';
 import { NodeTypes, SequenceNode, TurnNode } from '../Parser';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
+
+//
+// Cleaner rules:
+//
+//   1. Sequence: Merge same turns
+//     "R F B2 y L' R F" -> "R B' y F"
+//
+//   2. Conjugate: Invert commutator when cancelling with setup
+//     "[U: [U, L E L']]""- > "[U2: [L E L', U']]"
+//
+//   3. Repeating: Remove if multiplier is 0
+//     "(R U R' U')0" -> ""
+//
+//   4. Repeating: Flatten if multiplier is 1
+//     "(R U R' U')1" -> "R U R' U'"
+//
+//   5. Repeating: Flatten when multiplying a single turn
+//     "(R)6" -> "R2"
+//
 
 export const cleaner: Visitor = {
   [NodeTypes.Turn]: (node) => node,
 
   [NodeTypes.Sequence]: (node) => {
-    // Sort parallel moves
-    let sortedTurns: TurnNode[] = [];
+    // 1. Merge same turns
+    const merge = (turns: TurnNode[]): TurnNode[] => {
+      const orientation = new Orientation();
 
-    node.turns.forEach((turn) => {
-      let previousTurn = sortedTurns[sortedTurns.length - 1];
+      const groupedByParallel = turns.reduce(
+        (groups: TurnNode[][], turn: TurnNode) => {
+          const lastGroup = groups[groups.length - 1];
 
-      if (previousTurn && Turn.isParallel(previousTurn, turn)) {
-        // Pop all parallel moves in new array
-        const parallelTurns = [turn];
+          if (!lastGroup) {
+            return [[turn]];
+          }
 
-        while (previousTurn && Turn.isParallel(previousTurn, turn)) {
-          parallelTurns.push(sortedTurns.pop()!);
-          previousTurn = sortedTurns[sortedTurns.length - 1];
-        }
+          if (Turn.isRotationTurn(turn)) {
+            // Track rotation for current group
+            orientation.rotate(turn);
+            // Add rotation to the end of the last group
+            lastGroup.push(turn);
+          } else if (Turn.isParallel(orientation.getTurn(turn), lastGroup[0])) {
+            // Add to the last group if parallel
+            // Move the mapped turn in front of any previous rotations to allow for easy merging
+            // Note that the order of parallel moves does not matter, as long as moves are mapped correctly
+            // e.g. "U2 z M F2" -> [['E', 'U2', 'z'], ['F2']]
+            lastGroup.unshift(orientation.getTurn(turn));
+          } else {
+            orientation.reset();
+            groups.push([turn]);
+          }
 
-        // Sort array
-        const sortOrder = [
-          ['U', 'F', 'R', 'D', 'B', 'L'],
-          ['u', 'f', 'r', 'b', 'd', 'l'],
-          ['M', 'E', 'S'],
-        ];
+          return groups;
+        },
+        []
+      );
 
-        parallelTurns.sort((turn1, turn2) => {
-          return (
-            sortOrder.findIndex((array) => array.includes(turn1.move)) -
-            sortOrder.findIndex((array) => array.includes(turn2.move))
+      const groupedByMove = groupedByParallel.flatMap((group) => {
+        // Get all unique moves
+        const moves = [...new Set(group.map((turn) => turn.move))];
+
+        const sortOrder = [...'UFRDBL', ...'ufrdbl', ...'MES', ...'xyz'];
+
+        return moves
+          .sort((a, b) => sortOrder.indexOf(a) - sortOrder.indexOf(b))
+          .map((move) => group.filter((turn) => turn.move === move));
+      });
+
+      const merged = groupedByMove
+        .map((group) => {
+          const move = group.reduce(
+            (firstMove, secondMove) =>
+              (Turn.merge(firstMove, secondMove) as TurnNode | null) ?? {
+                type: NodeTypes.Turn,
+                move: firstMove.move,
+                direction: 0,
+              }
           );
-        });
 
-        // Place back
-        sortedTurns = sortedTurns.concat(parallelTurns);
-      } else {
-        sortedTurns.push(turn);
-      }
-    });
+          return move.direction ? move : null;
+        })
+        .filter(Boolean) as TurnNode[];
 
-    node.turns = sortedTurns;
+      return merged;
+    };
 
-    // Merge same turns
-    let mergedTurns: TurnNode[] = [];
+    // If anything was merged, repeat ("F R U U' R' F" -> "F R R' F" -> "F2")
+    const turnsToString = (turns: TurnNode[]) =>
+      turns.map((turn) => `${turn.move}${turn.direction}`).join();
 
-    node.turns.forEach((turn) => {
-      const previousTurn = mergedTurns[mergedTurns.length - 1];
+    let merged = merge(node.turns);
+    while (turnsToString(merged) !== turnsToString(merge(merged))) {
+      merged = merge(merged);
+    }
 
-      if (previousTurn && Turn.isSameMove(previousTurn, turn)) {
-        const mergedTurn = Turn.merge(turn, mergedTurns.pop()!);
-
-        if (mergedTurn) {
-          mergedTurns = mergedTurns.concat(mergedTurn);
-        }
-      } else {
-        mergedTurns.push(turn);
-      }
-    });
-
-    node.turns = mergedTurns;
+    node.turns = merged;
 
     // Remove node if turns array is empty
     if (node.turns.length === 0) {
@@ -72,7 +108,7 @@ export const cleaner: Visitor = {
   },
 
   [NodeTypes.Conjugate]: (node) => {
-    // Conjugate setup cancels with commutator interchange
+    // 2. Invert commutator when cancelling with setup
     if (
       // Setup ends with sequence
       node.A[node.A.length - 1].type === NodeTypes.Sequence &&
@@ -92,7 +128,7 @@ export const cleaner: Visitor = {
       let newLastTurnOfSetup: TurnNode | undefined;
       let newInterchange: TurnNode | undefined;
 
-      // Single/Single ([U: [U, L E L']] > [U2: [L E L', U']])
+      // Single/Single ([U: [U, L E L']] -> [U2: [L E L', U']])
       if (
         Turn.isSingleTurn(lastTurnOfSetup) &&
         Turn.isSingleTurn(interchange) &&
@@ -102,7 +138,7 @@ export const cleaner: Visitor = {
         newInterchange = Turn.invert(interchange);
       }
 
-      // Single/Double ([U': [U2, R D' R']] > [U: [R D' R', U2]])
+      // Single/Double ([U': [U2, R D' R']] -> [U: [R D' R', U2]])
       if (
         Turn.isSingleTurn(lastTurnOfSetup) &&
         Turn.isDoubleleTurn(interchange) &&
@@ -112,7 +148,7 @@ export const cleaner: Visitor = {
         newInterchange = interchange;
       }
 
-      // Double/Single ([R2 D2: [D, R U' R']] > [R2 D': [R U' R', D']])
+      // Double/Single ([R2 D2: [D, R U' R']] -> [R2 D': [R U' R', D']])
       if (
         Turn.isDoubleleTurn(lastTurnOfSetup) &&
         Turn.isSingleTurn(interchange) &&
@@ -154,17 +190,17 @@ export const cleaner: Visitor = {
   [NodeTypes.Commutator]: (node) => node,
 
   [NodeTypes.Repeating]: (node) => {
-    // Remove node if multiplier is 0
+    // 3. Remove if multiplier is 0
     if (node.multiplier === 0) {
       return null;
     }
 
-    // Flatten node if multiplier is 1
+    // 4. Flatten if multiplier is 1
     if (node.multiplier === 1) {
       return node.multiplicand;
     }
 
-    // Flatten to sequence when multiplying a single turn
+    // 5. Flatten when multiplying a single turn
     if (
       node.multiplicand.length === 1 &&
       node.multiplicand[0].type === NodeTypes.Sequence &&
