@@ -1,7 +1,7 @@
 import { Algorithm } from '../Algorithm/Algorithm';
 import { Direction, FaceMove, TurnNode } from '../Algorithm/Parser';
 import { Turn } from '../Algorithm/Turn';
-import { Orientation } from './Orientation';
+import { Orientation } from '../utils/Orientation';
 import { CornerName, CornerPiece, EdgeName, EdgePiece } from './Piece';
 
 // prettier-ignore
@@ -121,7 +121,7 @@ export class Cube {
   /** Turn a layer of the cube. Only allows outer face moves. */
   private turn(turn: TurnNode) {
     if (Turn.isFaceTurn(turn)) {
-      const layer = this.orientation.orientationMap[turn.move];
+      const layer = this.orientation.getFace(turn.move);
       const locations = Cube.pieceLocations[layer];
       const movingCorners = locations.corners.map((loc) => this.corners[loc]);
       const movingEdges = locations.edges.map((loc) => this.edges[loc]);

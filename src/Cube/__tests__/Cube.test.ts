@@ -37,24 +37,20 @@ describe('Cube', () => {
   it('resets orientation', () => {
     const cube = new Cube('x y z');
 
-    expect(cube.orientation.orientationMap).toEqual({
-      U: 'D',
-      F: 'R',
-      R: 'F',
-      D: 'U',
-      B: 'L',
-      L: 'B',
-    });
+    expect(cube.orientation.getFace('U')).toEqual('D');
+    expect(cube.orientation.getFace('F')).toEqual('R');
+    expect(cube.orientation.getFace('R')).toEqual('F');
+    expect(cube.orientation.getFace('D')).toEqual('U');
+    expect(cube.orientation.getFace('B')).toEqual('L');
+    expect(cube.orientation.getFace('L')).toEqual('B');
 
     cube.orient();
 
-    expect(cube.orientation.orientationMap).toEqual({
-      U: 'U',
-      F: 'F',
-      R: 'R',
-      D: 'D',
-      B: 'B',
-      L: 'L',
-    });
+    expect(cube.orientation.getFace('U')).toEqual('U');
+    expect(cube.orientation.getFace('F')).toEqual('F');
+    expect(cube.orientation.getFace('R')).toEqual('R');
+    expect(cube.orientation.getFace('D')).toEqual('D');
+    expect(cube.orientation.getFace('B')).toEqual('B');
+    expect(cube.orientation.getFace('L')).toEqual('L');
   });
 });

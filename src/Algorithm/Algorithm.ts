@@ -18,8 +18,6 @@ export class Algorithm {
 
     this.raw = alg;
     this.ast = ast;
-
-    this.ensureMaxLength(this.turns);
   }
 
   get clean(): string {

@@ -1,4 +1,10 @@
 import { Token, TokenTypes } from './Lexer';
+import {
+  FaceTurnNode,
+  RotationTurnNode,
+  SliceTurnNode,
+  WideTurnNode,
+} from './Turn';
 
 export type FaceMove = 'U' | 'F' | 'R' | 'D' | 'B' | 'L';
 export type WideMove = 'u' | 'f' | 'r' | 'd' | 'b' | 'l';
@@ -21,11 +27,11 @@ export enum NodeTypes {
   Algorithm = 'algorithm',
 }
 
-export type TurnNode = {
-  type: NodeTypes.Turn;
-  move: Move;
-  direction: Direction;
-};
+export type TurnNode =
+  | FaceTurnNode
+  | WideTurnNode
+  | SliceTurnNode
+  | RotationTurnNode;
 
 export type SequenceNode = {
   type: NodeTypes.Sequence;
