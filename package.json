@@ -1,6 +1,6 @@
 {
   "name": "magic-cubes",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "JavaScript library for simulating the Rubik's cube and working with algorithms.",
   "keywords": [
     "rubik's cube",
