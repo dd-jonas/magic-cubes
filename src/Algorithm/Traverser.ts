@@ -1,7 +1,13 @@
 import { AST, Node, NodeTypes } from './Parser';
-import { Visitor } from './Visitors';
+import {
+  cleaner,
+  rotationlessSequencer,
+  sequencer,
+  validator,
+  Visitor,
+} from './visitors';
 
-export class Traverser {
+class Traverser {
   private visitor: Visitor;
   ast: AST;
 
@@ -44,3 +50,16 @@ export class Traverser {
     this.ast = this.traverseNode(this.ast);
   }
 }
+
+export const traverse = (ast: AST, visitor: Visitor) => {
+  const traverser = new Traverser(ast, visitor);
+  traverser.run();
+
+  return traverser.ast;
+};
+
+export const clean = (ast: AST) => traverse(ast, cleaner);
+export const sequence = (ast: AST) => traverse(ast, sequencer);
+export const rotationless = (ast: AST) =>
+  traverse(traverse(ast, sequencer), rotationlessSequencer);
+export const validate = (ast: AST) => traverse(ast, validator);

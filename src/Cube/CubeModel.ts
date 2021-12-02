@@ -70,14 +70,14 @@ export class CubeModel<ColorScheme extends Record<Face, string>> {
       });
     });
 
-    const { orientationMap } = this.cube.orientation;
+    const { orientation } = this.cube;
     const flatColors = [
-      colors[orientationMap.U],
-      colors[orientationMap.F],
-      colors[orientationMap.R],
-      colors[orientationMap.D],
-      colors[orientationMap.B],
-      colors[orientationMap.L],
+      colors[orientation.getFace('U')],
+      colors[orientation.getFace('F')],
+      colors[orientation.getFace('R')],
+      colors[orientation.getFace('D')],
+      colors[orientation.getFace('B')],
+      colors[orientation.getFace('L')],
     ];
 
     return flatColors.map((face) => [

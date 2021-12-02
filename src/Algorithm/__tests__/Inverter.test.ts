@@ -1,49 +1,48 @@
-import { Inverter } from '../Inverter';
+import { invert } from '../Inverter';
 import { Direction, NodeTypes } from '../Parser';
+import { turn } from '../Turn';
+
+const { CW, CCW, Double } = Direction;
 
 describe('Inverter', () => {
   it('inverts an empty algorithm', () => {
-    const inverter = new Inverter({ type: NodeTypes.Algorithm, body: [] });
+    const inverse = invert({ type: NodeTypes.Algorithm, body: [] });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    expect(inverse).toEqual({ type: NodeTypes.Algorithm, body: [] });
   });
 
   it('inverts a sequence', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
           type: NodeTypes.Sequence,
           turns: [
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.Double },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+            turn('R', CW),
+            turn('U', CW),
+            turn('R', CCW),
+            turn('U', CW),
+            turn('R', CW),
+            turn('U', Double),
+            turn('R', CCW),
           ],
         },
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
           type: NodeTypes.Sequence,
           turns: [
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.Double },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-            { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-            { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+            turn('R', CW),
+            turn('U', Double),
+            turn('R', CCW),
+            turn('U', CCW),
+            turn('R', CW),
+            turn('U', CCW),
+            turn('R', CCW),
           ],
         },
       ],
@@ -51,7 +50,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a conjugate', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -59,32 +58,20 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -92,23 +79,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
@@ -117,7 +94,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a commutator', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -125,32 +102,20 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
         },
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -158,23 +123,13 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                {
-                  type: NodeTypes.Turn,
-                  move: 'D',
-                  direction: Direction.Double,
-                },
-              ],
+              turns: [turn('D', Double)],
             },
           ],
           B: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
             },
           ],
         },
@@ -183,7 +138,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a repeating group', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -192,10 +147,10 @@ describe('Inverter', () => {
             {
               type: NodeTypes.Sequence,
               turns: [
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
+                turn('R', CW),
+                turn('U', CW),
+                turn('R', CCW),
+                turn('U', CCW),
               ],
             },
           ],
@@ -204,9 +159,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -215,10 +168,10 @@ describe('Inverter', () => {
             {
               type: NodeTypes.Sequence,
               turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CW },
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-                { type: NodeTypes.Turn, move: 'R', direction: Direction.CCW },
+                turn('U', CW),
+                turn('R', CW),
+                turn('U', CCW),
+                turn('R', CCW),
               ],
             },
           ],
@@ -229,7 +182,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (conjugate with nested commutator)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -237,9 +190,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -248,35 +199,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
             },
@@ -285,9 +214,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -295,9 +222,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'z', direction: Direction.CCW },
-              ],
+              turns: [turn('z', CCW)],
             },
           ],
           B: [
@@ -306,35 +231,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('D', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
                 },
               ],
             },
@@ -345,7 +248,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (multiple conjugates)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -353,9 +256,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-              ],
+              turns: [turn('U', CCW)],
             },
           ],
           B: [
@@ -364,35 +265,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                  ],
+                  turns: [turn('U', CW)],
                 },
               ],
             },
@@ -402,39 +281,17 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
+                    turn('D', CCW),
+                    turn('R', CW),
+                    turn('D', CW),
+                    turn('R', CCW),
                   ],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('U', CCW)],
                 },
               ],
             },
@@ -443,9 +300,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -453,9 +308,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-              ],
+              turns: [turn('U', CCW)],
             },
           ],
           B: [
@@ -465,39 +318,17 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
+                    turn('D', CCW),
+                    turn('R', CW),
+                    turn('D', CW),
+                    turn('R', CCW),
                   ],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                  ],
+                  turns: [turn('U', CW)],
                 },
               ],
             },
@@ -506,35 +337,13 @@ describe('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'D',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'R',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
                 },
               ],
               B: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                  ],
+                  turns: [turn('U', CCW)],
                 },
               ],
             },
@@ -545,7 +354,7 @@ describe('Inverter', () => {
   });
 
   it('inverts a complex algorithm (nested repeating group)', () => {
-    const inverter = new Inverter({
+    const inverse = invert({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -553,9 +362,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'M', direction: Direction.CCW },
-              ],
+              turns: [turn('M', CCW)],
             },
           ],
           B: [
@@ -565,26 +372,10 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CW,
-                    },
+                    turn('U', CW),
+                    turn('M', CCW),
+                    turn('U', CW),
+                    turn('M', CW),
                   ],
                 },
               ],
@@ -595,9 +386,7 @@ describe('Inverter', () => {
       ],
     });
 
-    inverter.run();
-
-    expect(inverter.ast).toEqual({
+    expect(inverse).toEqual({
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -605,9 +394,7 @@ describe('Inverter', () => {
           A: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                { type: NodeTypes.Turn, move: 'M', direction: Direction.CCW },
-              ],
+              turns: [turn('M', CCW)],
             },
           ],
           B: [
@@ -617,26 +404,10 @@ describe('Inverter', () => {
                 {
                   type: NodeTypes.Sequence,
                   turns: [
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'M',
-                      direction: Direction.CW,
-                    },
-                    {
-                      type: NodeTypes.Turn,
-                      move: 'U',
-                      direction: Direction.CCW,
-                    },
+                    turn('M', CCW),
+                    turn('U', CCW),
+                    turn('M', CW),
+                    turn('U', CCW),
                   ],
                 },
               ],

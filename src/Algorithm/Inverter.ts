@@ -5,7 +5,7 @@ import { Turn } from './Turn';
  * Special type of traverser to inverse an algorithm
  */
 
-export class Inverter {
+class Inverter {
   ast: AST;
 
   constructor(ast: AST) {
@@ -55,3 +55,10 @@ export class Inverter {
     this.ast = this.invertNode(this.ast) as AST;
   }
 }
+
+export const invert = (ast: AST) => {
+  const inverter = new Inverter(ast);
+  inverter.run();
+
+  return inverter.ast;
+};
