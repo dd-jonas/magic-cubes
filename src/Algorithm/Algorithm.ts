@@ -2,7 +2,7 @@ import { generate } from './Generator';
 import { invert } from './Inverter';
 import { lex } from './Lexer';
 import { AST, parse, SequenceNode, TurnNode } from './Parser';
-import { clean, sequence, validate } from './Traverser';
+import { clean, rotationless, sequence, validate } from './Traverser';
 
 export class Algorithm {
   readonly raw: string;
@@ -28,6 +28,18 @@ export class Algorithm {
   get inverse(): string {
     const inversed = invert(this.ast);
     const cleaned = clean(inversed);
+    return generate(cleaned);
+  }
+
+  get rotationless(): string {
+    const rotationlessSequence = rotationless(this.ast);
+    const cleaned = clean(rotationlessSequence);
+    return generate(cleaned);
+  }
+
+  get sequence(): string {
+    const sequenced = sequence(this.ast);
+    const cleaned = clean(sequenced);
     return generate(cleaned);
   }
 
