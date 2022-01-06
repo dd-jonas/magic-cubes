@@ -55,20 +55,20 @@ const colorScheme = {
 
 const model = new CubeModel(cube, colorScheme);
 model.render((faces) => {
-  const [up, front, right, down, back, left] = faces.map((face) =>
+  const [u, f, r, d, b, l] = faces.map((face) =>
     face.map((row) => row.join(''))
   );
 
   console.log(`
-        ${up[0]}
-        ${up[1]}
-        ${up[2]}
-    ${left[0]} ${front[0]} ${right[0]} ${back[0]}
-    ${left[1]} ${front[1]} ${right[1]} ${back[1]}
-    ${left[2]} ${front[2]} ${right[2]} ${back[2]}
-        ${down[0]}
-        ${down[1]}
-        ${down[2]}
+        ${u[0]}
+        ${u[1]}
+        ${u[2]}
+    ${l[0]} ${f[0]} ${r[0]} ${b[0]}
+    ${l[1]} ${f[1]} ${r[1]} ${b[1]}
+    ${l[2]} ${f[2]} ${r[2]} ${b[2]}
+        ${d[0]}
+        ${d[1]}
+        ${d[2]}
   `);
 
   // ->
