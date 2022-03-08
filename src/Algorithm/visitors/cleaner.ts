@@ -1,5 +1,5 @@
 import { Orientation } from '../../utils/Orientation';
-import { NodeTypes, SequenceNode, TurnNode } from '../Parser';
+import { NodeTypes, TurnNode } from '../Parser';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
 
@@ -9,16 +9,13 @@ import { Visitor } from './Visitor';
 //   1. Sequence: Merge same turns
 //     "R F B2 y L' R F" -> "R B' y F"
 //
-//   2. Conjugate: Invert commutator when cancelling with setup
-//     "[U: [U, L E L']]""- > "[U2: [L E L', U']]"
-//
-//   3. Repeating: Remove if multiplier is 0
+//   2. Repeating: Remove if multiplier is 0
 //     "(R U R' U')0" -> ""
 //
-//   4. Repeating: Flatten if multiplier is 1
+//   3. Repeating: Flatten if multiplier is 1
 //     "(R U R' U')1" -> "R U R' U'"
 //
-//   5. Repeating: Flatten when multiplying a single turn
+//   4. Repeating: Flatten when multiplying a single turn
 //     "(R)6" -> "R2"
 //
 
@@ -107,100 +104,22 @@ export const cleaner: Visitor = {
     return node;
   },
 
-  [NodeTypes.Conjugate]: (node) => {
-    // 2. Invert commutator when cancelling with setup
-    if (
-      // Setup ends with sequence
-      node.A[node.A.length - 1].type === NodeTypes.Sequence &&
-      // Setup is followed by a commutator
-      node.B.length === 1 &&
-      node.B[0].type === NodeTypes.Commutator &&
-      // Commutator starts with interchange
-      node.B[0].A.length === 1 &&
-      node.B[0].A[0].type === NodeTypes.Sequence &&
-      node.B[0].A[0].turns.length === 1
-    ) {
-      const setupSequence = node.A[node.A.length - 1] as SequenceNode;
-      const lastTurnOfSetup =
-        setupSequence.turns[setupSequence.turns.length - 1];
-      const interchange = node.B[0].A[0].turns[0];
-
-      let newLastTurnOfSetup: TurnNode | undefined;
-      let newInterchange: TurnNode | undefined;
-
-      // Single/Single ([U: [U, L E L']] -> [U2: [L E L', U']])
-      if (
-        Turn.isSingleTurn(lastTurnOfSetup) &&
-        Turn.isSingleTurn(interchange) &&
-        Turn.isSameMove(lastTurnOfSetup, interchange)
-      ) {
-        newLastTurnOfSetup = Turn.repeat(lastTurnOfSetup, 2)!;
-        newInterchange = Turn.invert(interchange);
-      }
-
-      // Single/Double ([U': [U2, R D' R']] -> [U: [R D' R', U2]])
-      if (
-        Turn.isSingleTurn(lastTurnOfSetup) &&
-        Turn.isDoubleleTurn(interchange) &&
-        Turn.isSameMove(lastTurnOfSetup, interchange)
-      ) {
-        newLastTurnOfSetup = Turn.invert(lastTurnOfSetup);
-        newInterchange = interchange;
-      }
-
-      // Double/Single ([R2 D2: [D, R U' R']] -> [R2 D': [R U' R', D']])
-      if (
-        Turn.isDoubleleTurn(lastTurnOfSetup) &&
-        Turn.isSingleTurn(interchange) &&
-        Turn.isSameMove(lastTurnOfSetup, interchange)
-      ) {
-        newLastTurnOfSetup = Turn.invert(interchange);
-        newInterchange = Turn.invert(interchange);
-      }
-
-      if (newLastTurnOfSetup && newInterchange) {
-        return {
-          type: NodeTypes.Conjugate,
-          A: [
-            ...node.A.slice(0, -1),
-            {
-              type: NodeTypes.Sequence,
-              turns: [...setupSequence.turns.slice(0, -1), newLastTurnOfSetup],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Commutator,
-              A: node.B[0].B,
-              B: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [newInterchange],
-                },
-              ],
-            },
-          ],
-        };
-      }
-    }
-
-    return node;
-  },
+  [NodeTypes.Conjugate]: (node) => node,
 
   [NodeTypes.Commutator]: (node) => node,
 
   [NodeTypes.Repeating]: (node) => {
-    // 3. Remove if multiplier is 0
+    // 2. Remove if multiplier is 0
     if (node.multiplier === 0) {
       return null;
     }
 
-    // 4. Flatten if multiplier is 1
+    // 3. Flatten if multiplier is 1
     if (node.multiplier === 1) {
       return node.multiplicand;
     }
 
-    // 5. Flatten when multiplying a single turn
+    // 4. Flatten when multiplying a single turn
     if (
       node.multiplicand.length === 1 &&
       node.multiplicand[0].type === NodeTypes.Sequence &&
