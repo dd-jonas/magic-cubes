@@ -1,3 +1,5 @@
+![npm](https://img.shields.io/npm/v/magic-cubes?style=for-the-badge)
+
 # Magic Cubes
 
 JavaScript library for simulating the Rubik's cube and working with algorithms.
