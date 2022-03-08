@@ -9,6 +9,10 @@ export class Algorithm {
   readonly ast: AST;
 
   constructor(alg: string) {
+    if (typeof alg !== 'string') {
+      throw new Error('Algorithm must be a string');
+    }
+
     this.ensureMaxLength(alg);
 
     const tokens = lex(this.normalize(alg));
