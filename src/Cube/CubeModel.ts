@@ -2,13 +2,13 @@ import { Cube } from './Cube';
 import { CornerPiece, EdgePiece, PieceName } from './Piece';
 
 export type Face = 'U' | 'F' | 'R' | 'D' | 'B' | 'L';
-export type CubeColors<S extends string> = S[][][];
+export type CubeColors<S extends string> = Record<Face, S[]>;
 
-export class CubeModel<ColorScheme extends Record<Face, string>> {
+export class CubeModel<
+  ColorScheme extends Record<Face, string> = Record<Face, string>
+> {
   private readonly cube: Cube;
   private readonly colorScheme: ColorScheme;
-
-  static faceOrder = ['U', 'F', 'R', 'D', 'B', 'L'] as const;
 
   // Location of all stickers on their respective faces
   // e.g. DBL: [['D', 6], ...] means the D sticker of the DBL piece is the 6th sticker on the D face
@@ -41,20 +41,22 @@ export class CubeModel<ColorScheme extends Record<Face, string>> {
     this.colorScheme = colorScheme;
   }
 
-  get colors(): CubeColors<ColorScheme[Face]> {
+  colors(): CubeColors<ColorScheme[Face]> {
     const colors: Record<Face, Array<ColorScheme[Face]>> = {
       U: [],
-      F: [],
-      R: [],
       D: [],
+      F: [],
       B: [],
       L: [],
+      R: [],
     };
 
-    CubeModel.faceOrder.forEach((center) => {
-      colors[center][4] = this.colorScheme[center];
+    // Insert center colors
+    Object.entries(colors).forEach(([face, array]) => {
+      array[4] = this.colorScheme[face as Face];
     });
 
+    // Insert corner and edge colors
     const cycleCW = (arr: Array<unknown>) => arr.unshift(arr.pop());
     const cycleCCW = (arr: Array<unknown>) => arr.push(arr.shift());
 
@@ -70,25 +72,165 @@ export class CubeModel<ColorScheme extends Record<Face, string>> {
       });
     });
 
+    // Apply rotations
     const { orientation } = this.cube;
-    const flatColors = [
-      colors[orientation.getFace('U')],
-      colors[orientation.getFace('F')],
-      colors[orientation.getFace('R')],
-      colors[orientation.getFace('D')],
-      colors[orientation.getFace('B')],
-      colors[orientation.getFace('L')],
-    ];
 
-    return flatColors.map((face) => [
-      face.slice(0, 3),
-      face.slice(3, 6),
-      face.slice(6, 9),
-    ]);
-  }
+    const rotateCW = <T>(array: T[]) => {
+      const [a, b, c, d, e, f, g, h, i] = array;
+      return [g, d, a, h, e, b, i, f, c];
+    };
 
-  render<T>(callback: (c: CubeColors<ColorScheme[Face]>) => T) {
-    return callback(this.colors);
+    const rotateCCW = <T>(array: T[]) => {
+      const [a, b, c, d, e, f, g, h, i] = array;
+      return [c, f, i, b, e, h, a, d, g];
+    };
+
+    const rotateDouble = <T>(array: T[]) => [...array].reverse();
+
+    const up = orientation.getFace('U');
+    const front = orientation.getFace('F');
+
+    switch (up) {
+      case 'U':
+        switch (front) {
+          case 'R':
+            colors.U = rotateCW(colors.U);
+            colors.D = rotateCCW(colors.D);
+            break;
+          case 'B':
+            colors.U = rotateDouble(colors.U);
+            colors.D = rotateDouble(colors.D);
+            break;
+          case 'L':
+            colors.U = rotateCCW(colors.U);
+            colors.D = rotateCW(colors.D);
+            break;
+        }
+        break;
+
+      case 'D':
+        colors.F = rotateDouble(colors.F);
+        colors.B = rotateDouble(colors.B);
+        colors.L = rotateDouble(colors.L);
+        colors.R = rotateDouble(colors.R);
+
+        switch (front) {
+          case 'R':
+            colors.D = rotateCW(colors.D);
+            colors.U = rotateCCW(colors.U);
+            break;
+          case 'F':
+            colors.D = rotateDouble(colors.D);
+            colors.U = rotateDouble(colors.U);
+            break;
+          case 'L':
+            colors.D = rotateCCW(colors.D);
+            colors.U = rotateCW(colors.U);
+            break;
+        }
+        break;
+
+      case 'F':
+        colors.U = rotateDouble(colors.U);
+        colors.B = rotateDouble(colors.B);
+        colors.L = rotateCCW(colors.L);
+        colors.R = rotateCW(colors.R);
+
+        switch (front) {
+          case 'R':
+            colors.F = rotateCW(colors.F);
+            colors.B = rotateCCW(colors.B);
+            break;
+          case 'U':
+            colors.F = rotateDouble(colors.F);
+            colors.B = rotateDouble(colors.B);
+            break;
+          case 'L':
+            colors.F = rotateCCW(colors.F);
+            colors.B = rotateCW(colors.B);
+            break;
+        }
+        break;
+
+      case 'B':
+        colors.B = rotateDouble(colors.B);
+        colors.D = rotateDouble(colors.D);
+        colors.L = rotateCW(colors.L);
+        colors.R = rotateCCW(colors.R);
+
+        switch (front) {
+          case 'R':
+            colors.B = rotateCW(colors.B);
+            colors.F = rotateCCW(colors.F);
+            break;
+          case 'D':
+            colors.B = rotateDouble(colors.B);
+            colors.F = rotateDouble(colors.F);
+            break;
+          case 'L':
+            colors.B = rotateCCW(colors.B);
+            colors.F = rotateCW(colors.F);
+            break;
+        }
+        break;
+
+      case 'L':
+        colors.U = rotateCW(colors.U);
+        colors.D = rotateCW(colors.D);
+        colors.F = rotateCW(colors.F);
+        colors.B = rotateCCW(colors.B);
+        colors.L = rotateCW(colors.L);
+        colors.R = rotateCW(colors.R);
+
+        switch (front) {
+          case 'U':
+            colors.L = rotateCW(colors.L);
+            colors.R = rotateCCW(colors.R);
+            break;
+          case 'B':
+            colors.L = rotateDouble(colors.L);
+            colors.R = rotateDouble(colors.R);
+            break;
+          case 'D':
+            colors.L = rotateCCW(colors.L);
+            colors.R = rotateCW(colors.R);
+            break;
+        }
+        break;
+
+      case 'R':
+        colors.U = rotateCCW(colors.U);
+        colors.D = rotateCCW(colors.D);
+        colors.F = rotateCCW(colors.F);
+        colors.B = rotateCW(colors.B);
+        colors.L = rotateCCW(colors.L);
+        colors.R = rotateCCW(colors.R);
+
+        switch (front) {
+          case 'D':
+            colors.R = rotateCW(colors.R);
+            colors.L = rotateCCW(colors.L);
+            break;
+          case 'B':
+            colors.R = rotateDouble(colors.R);
+            colors.L = rotateDouble(colors.L);
+            break;
+          case 'U':
+            colors.R = rotateCCW(colors.R);
+            colors.L = rotateCW(colors.L);
+            break;
+        }
+        break;
+    }
+
+    return {
+      U: colors[orientation.getFace('U')],
+      D: colors[orientation.getFace('D')],
+      F: colors[orientation.getFace('F')],
+      B: colors[orientation.getFace('B')],
+      L: colors[orientation.getFace('L')],
+      R: colors[orientation.getFace('R')],
+    };
   }
 
   private getPieceAtPosition(position: PieceName): CornerPiece | EdgePiece {

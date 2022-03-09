@@ -148,29 +148,15 @@ new CubeModel(cube, colorScheme);
 - `colorScheme: Record<Face, string>`
   - Required
   - An object that maps each `Face` to a string.
-  - `Face` is `'U' | 'F' | 'R' | 'D' | 'B' | 'L'`.
-
-#### Properties
-
-- `colors: CubeColors`
-  - Array that describes the colors of the cube.
-  - `CubeColors` is of type `string[][][]`.
-    - Outer array contains 6 arrays that describe the faces in the order U F R D B L.
-    - Face arrays contain 3 arrays that describe the rows of a face from top to bottom.
-    - Row arrays contain 3 strings that describe the stickers of a row from left to right.
-    - _Tip: Use array methods `flat` and `flatMap` when a single array of 9 face stickers is preferred._
-  - `string` will be a color defined in `colorScheme`.
-  - _Tip: Use `as const` when defining the color scheme in TypeScript to give `CubeColors` a stronger typing (`string[][][]` becomes `ColorScheme[Face][][][]`)._
+  - `Face` is `'U' | 'D' | 'F' | 'B' | 'L' | 'R'`.
 
 #### Methods
 
-- `render<T>(callback: (colors: CubeColors) => T)`
-  - Helper function that calls the callback function with `colors` as argument.
-
-#### Static Properties
-
-- `faceOrder: ['U', 'F', 'R', 'D', 'B', 'L']`
-  - The order of faces used by the `colors` property.
+- `colors: () => CubeColors`
+  - Object that describes the colors of the cube.
+  - `CubeColors` is of type `Record<Face, string[]>`.
+  - `string` will be a color defined in `colorScheme`.
+  - _Tip: Use `as const` when defining the color scheme in TypeScript to give `CubeColors` a stronger typing (`Record<Face, string[]>` becomes `Record<Face, ColorScheme[Face][]>`)._
 
 ### Algorithm
 
