@@ -2,6 +2,18 @@ import { Algorithm } from '../Algorithm';
 import { Direction, NodeTypes } from '../Parser';
 
 describe('Algorithm constructor', () => {
+  it('handles empty input', () => {
+    const alg = new Algorithm('');
+
+    expect(() => {
+      alg.clean;
+      alg.inverse;
+      alg.rotationless;
+      alg.sequence;
+      alg.turns;
+    }).not.toThrow();
+  });
+
   it('throws when exceeding the max input length', () => {
     const longAlg =
       'R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U ';

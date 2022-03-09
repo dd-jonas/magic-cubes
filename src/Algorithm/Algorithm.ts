@@ -50,7 +50,7 @@ export class Algorithm {
   get turns(): TurnNode[] {
     const sequenced = sequence(this.ast);
     const cleaned = clean(sequenced);
-    return (cleaned.body[0] as SequenceNode).turns;
+    return (cleaned.body[0] as SequenceNode | undefined)?.turns ?? [];
   }
 
   /**
