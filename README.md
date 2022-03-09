@@ -1,3 +1,5 @@
+![npm](https://img.shields.io/npm/v/magic-cubes?style=for-the-badge)
+
 # Magic Cubes
 
 JavaScript library for simulating the Rubik's cube and working with algorithms.
@@ -55,24 +57,20 @@ const colorScheme = {
 
 const model = new CubeModel(cube, colorScheme);
 model.render((faces) => {
-  const [up, front, right, down, back, left] = faces;
+  const [u, f, r, d, b, l] = faces.map((face) =>
+    face.map((row) => row.join(''))
+  );
 
   console.log(`
-      ${up[0].join('')}
-      ${up[1].join('')}
-      ${up[2].join('')}
-  ${left[0].join('')} ${front[0].join('')} ${right[0].join('')} ${back[0].join(
-    ''
-  )}
-  ${left[1].join('')} ${front[1].join('')} ${right[1].join('')} ${back[1].join(
-    ''
-  )}
-  ${left[2].join('')} ${front[2].join('')} ${right[2].join('')} ${back[2].join(
-    ''
-  )}
-      ${down[0].join('')}
-      ${down[1].join('')}
-      ${down[2].join('')}
+        ${u[0]}
+        ${u[1]}
+        ${u[2]}
+    ${l[0]} ${f[0]} ${r[0]} ${b[0]}
+    ${l[1]} ${f[1]} ${r[1]} ${b[1]}
+    ${l[2]} ${f[2]} ${r[2]} ${b[2]}
+        ${d[0]}
+        ${d[1]}
+        ${d[2]}
   `);
 
   // ->
