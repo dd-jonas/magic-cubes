@@ -60,10 +60,14 @@ export const cleaner: Visitor = {
         // Get all unique moves
         const moves = [...new Set(group.map((turn) => turn.move))];
 
-        const sortOrder = [...'UFRDBL', ...'ufrdbl', ...'MES', ...'xyz'];
+        const sortOrder = ['UFR', 'DBL', 'ufr', 'dbl', 'MES', 'xyz'];
 
         return moves
-          .sort((a, b) => sortOrder.indexOf(a) - sortOrder.indexOf(b))
+          .sort((a, b) => {
+            const indexA = sortOrder.findIndex((v) => v.includes(a));
+            const indexB = sortOrder.findIndex((v) => v.includes(b));
+            return indexA - indexB;
+          })
           .map((move) => group.filter((turn) => turn.move === move));
       });
 

@@ -97,6 +97,42 @@ describe('Cleaner visitor', () => {
     });
   });
 
+  it("does't sort rotations", () => {
+    // M z y x S' -> M2 z y x
+    const ast: AST = {
+      type: NodeTypes.Algorithm,
+      body: [
+        {
+          type: NodeTypes.Sequence,
+          turns: [
+            turn('M', CW),
+            turn('z', CW),
+            turn('y', CW),
+            turn('x', CW),
+            turn('S', CCW),
+          ],
+        },
+      ],
+    };
+
+    const cleaned = clean(ast);
+
+    expect(cleaned).toEqual({
+      type: NodeTypes.Algorithm,
+      body: [
+        {
+          type: NodeTypes.Sequence,
+          turns: [
+            turn('M', Double),
+            turn('z', CW),
+            turn('y', CW),
+            turn('x', CW),
+          ],
+        },
+      ],
+    });
+  });
+
   it('merges consecutive turns of a sequence', () => {
     // R2 R' R2 U2 U' L L' R U U U -> R' U R U'
     const ast: AST = {
