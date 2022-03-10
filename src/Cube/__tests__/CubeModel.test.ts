@@ -52,6 +52,7 @@ describe('CubeModel', () => {
     const cube4 = new Cube('R U F D2 y2');
     const cube5 = new Cube('R U F D2 x');
     const cube6 = new Cube("R U F D2 x'");
+    const cube7 = new Cube('R U F D2 x2');
 
     const model1 = new CubeModel(cube1, colorScheme);
     const model2 = new CubeModel(cube2, colorScheme);
@@ -59,6 +60,7 @@ describe('CubeModel', () => {
     const model4 = new CubeModel(cube4, colorScheme);
     const model5 = new CubeModel(cube5, colorScheme);
     const model6 = new CubeModel(cube6, colorScheme);
+    const model7 = new CubeModel(cube7, colorScheme);
 
     // prettier-ignore
     expect(model1.colors()).toEqual({
@@ -111,6 +113,17 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
+    expect(model6.colors()).toEqual({
+      U: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
+      D: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
+      F: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
+      B: ['red', 'red', 'white', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'blue'],
+      L: ['green', 'orange', 'green', 'red', 'orange', 'green', 'red', 'yellow', 'yellow'],
+      R: ['blue', 'red', 'blue', 'blue', 'red', 'orange', 'green', 'green', 'orange'],
+    });
+
+    // Ref only, remove
+    // prettier-ignore
     expect(model1.colors()).toEqual({
       U: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
       D: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
@@ -121,13 +134,13 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model6.colors()).toEqual({
-      U: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
-      D: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
-      F: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
-      B: ['red', 'red', 'white', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'blue'],
-      L: ['green', 'orange', 'green', 'red', 'orange', 'green', 'red', 'yellow', 'yellow'],
-      R: ['blue', 'red', 'blue', 'blue', 'red', 'orange', 'green', 'green', 'orange'],
+    expect(model7.colors()).toEqual({
+      U: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
+      D: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
+      F: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
+      B: ['blue', 'blue', 'white', 'red', 'green', 'green', 'red', 'green', 'green'],
+      L: ['red', 'red', 'green', 'yellow', 'orange', 'orange', 'yellow', 'green', 'green'],
+      R: ['blue', 'orange', 'orange', 'red', 'red', 'green', 'blue', 'blue', 'green'],
     });
   });
 });
