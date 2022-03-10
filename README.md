@@ -48,41 +48,44 @@ import { Cube, CubeModel } from 'magic-cubes';
 const cube = new Cube("D2 U2 B F2 D2 B D2 R2 D2 U2 R' U' B2 F2 R' U2 F L U R");
 const colorScheme = {
   U: 'w', // white
-  F: 'g', // green
-  R: 'r', // red
   D: 'y', // yellow
+  F: 'g', // green
   B: 'b', // blue
   L: 'o', // orange
+  R: 'r', // red
 };
 
 const model = new CubeModel(cube, colorScheme);
-model.render((faces) => {
-  const [u, f, r, d, b, l] = faces.map((face) =>
-    face.map((row) => row.join(''))
-  );
+const colors = model.colors();
 
-  console.log(`
-        ${u[0]}
-        ${u[1]}
-        ${u[2]}
-    ${l[0]} ${f[0]} ${r[0]} ${b[0]}
-    ${l[1]} ${f[1]} ${r[1]} ${b[1]}
-    ${l[2]} ${f[2]} ${r[2]} ${b[2]}
-        ${d[0]}
-        ${d[1]}
-        ${d[2]}
-  `);
+const { U, D, F, B, L, R } = Object.fromEntries(
+  Object.entries(colors).map(([face, colors]) => {
+    return [face, colors.join('').match(/.{3}/g)];
+  })
+);
 
-  // ->
-  //        oyo
-  //        rwg
-  //        ryr
-  //    bwb wbw gwy grw
-  //    oor bgg rrb obw
-  //    byw gyy gwb oor
-  //        ogr
-  //        oyb
-  //        ygy
+console.log(`
+    ${U[0]}
+    ${U[1]}
+    ${U[2]}
+${L[0]} ${F[0]} ${R[0]} ${B[0]}
+${L[1]} ${F[1]} ${R[1]} ${B[1]}
+${L[2]} ${F[2]} ${R[2]} ${B[2]}
+    ${D[0]}
+    ${D[1]}
+    ${D[2]}
+`);
+
+// ->
+//     oyo
+//     rwg
+//     ryr
+// bwb wbw gwy grw
+// oor bgg rrb obw
+// byw gyy gwb oor
+//     ogr
+//     oyb
+//     ygy
 });
 ```
 
@@ -176,7 +179,7 @@ new Algorithm(alg);
     - Prime characters (`'`, `’` and `′`) will be converted to `'`.
     - Double prime turns (`2'` or `'2`) will be converted to `2`.
     - Wide move notation with `w` will be converted to lowercase (e.g. `Fw` becomes `f`).
-    - Parantheses without multiplier will be removed (e.g. `F (R U R' U') F'` becomes `F R U R' U' F'`).
+    - Parentheses without multiplier will be removed (e.g. `F (R U R' U') F'` becomes `F R U R' U' F'`).
     - Asterisks before multipliers will be removed (e.g. `(M U)*4` becomes `(M U)4`).
   - Throws a descriptive error when the string is invalid.
 
@@ -188,19 +191,23 @@ new Algorithm(alg);
   - Cleaned up version of the input.
   - Normalizes spacing.
   - Merges multiple turns (e.g. `R R` becomes `R2`).
-  - Inverts commutators when cancelling with the conjugate setup. (e.g. `[U: [U, L E L']]` becomes `[U2: [L E L', U']]`).
   - Removes repeating group with a multiplier of `0`.
   - Converts repeating groups with a multiplier of `1` to a sequence.
   - Etc.
 - `inverse`
   - Inverse of the input.
+- `sequence`
+  - A sequenced version of the input.
+  - Converts commutators, conjugates and repeating groups.
+- `rotationless`
+  - A sequenced, rotationless version of the input.
+  - Translates rotations, wide turns and slice turns to face turns.
 - `turns: TurnNode[]`
   - Array of turn nodes after sequencing the algorithm.
   - Used by `Cube` when applying an algorithm. Shouldn't need to be called directly.
 
 ## Roadmap
 
-- Additional algorithm props and methods (rotationless, parallel move concatentation, ...)
 - Scramble generator
 - Kociemba solver
 
