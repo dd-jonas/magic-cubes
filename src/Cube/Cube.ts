@@ -79,7 +79,7 @@ export class Cube {
     }
   }
 
-  /** Checks if the cube is in the solved state. */
+  /** Check if the cube is in the solved state. */
   get isSolved() {
     const cornersSolved = this.corners.every(
       (corner, i) =>
@@ -90,6 +90,11 @@ export class Cube {
     );
 
     return cornersSolved && edgesSolved;
+  }
+
+  /** Check if the cube is oriented */
+  get isOriented() {
+    return this.orientation.isOriented;
   }
 
   /** Apply an algorithm to the cube. */

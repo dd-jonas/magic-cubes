@@ -34,6 +34,16 @@ describe('Cube', () => {
     expect(cube.isSolved).toBe(true);
   });
 
+  it('checks if the cube is oriented', () => {
+    const cube = new Cube();
+
+    expect(cube.isOriented).toEqual(true);
+
+    cube.apply('x y z');
+
+    expect(cube.isOriented).toEqual(false);
+  });
+
   it('resets orientation', () => {
     const cube = new Cube('x y z');
 

@@ -22,6 +22,13 @@ export class Orientation {
   };
 
   /**
+   * Check if the orientation is in the initial orientation
+   */
+  get isOriented() {
+    return Object.entries(this.map).every(([pos, face]) => pos === face);
+  }
+
+  /**
    * Rotate the cube along the x, y or z axis.
    */
   rotate(rotation: RotationTurnNode) {

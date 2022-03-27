@@ -56,6 +56,20 @@ describe('Orientation', () => {
     expect(orientation.getFace('L')).toEqual('B');
   });
 
+  it('checks if it is orientated', () => {
+    const orientation = new Orientation();
+
+    expect(orientation.isOriented).toEqual(true);
+
+    orientation.rotate(rotation('x', CW));
+
+    expect(orientation.isOriented).toEqual(false);
+
+    orientation.rotate(rotation('x', CCW));
+
+    expect(orientation.isOriented).toEqual(true);
+  });
+
   it('resets the orientation', () => {
     const rotations: RotationTurnNode[] = [
       rotation(x, CCW),
