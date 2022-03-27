@@ -124,6 +124,8 @@ new Cube(scramble?);
 - `isSolved`
   - Checks if the cube is in the solved state.
   - Ignores orientation.
+- `isOriented`
+  - Checks if the cube is oriented.
 
 #### Methods
 
