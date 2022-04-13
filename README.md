@@ -101,7 +101,7 @@ console.log(alg.inverse); // -> [l', [R' D2 R, U]]
 try {
   const incorrectAlg = new Algorithm('foo');
 } catch (error) {
-  console.log(error); // -> Invalid character 'o' at position 2.
+  console.log(error.message); // -> Invalid character 'o' at position 2.
 }
 ```
 
@@ -210,6 +210,7 @@ new Algorithm(alg);
 
 ## Roadmap
 
+- nxn support
 - Scramble generator
 - Kociemba solver
 
