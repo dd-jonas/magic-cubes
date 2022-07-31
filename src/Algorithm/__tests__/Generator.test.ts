@@ -1,14 +1,16 @@
+import { assert, describe, it } from 'vitest';
+
 import { generate } from '../Generator';
 import { Direction, NodeTypes } from '../Parser';
 import { turn } from '../Turn';
 
 const { CW, CCW, Double } = Direction;
 
-describe('Generator', () => {
+describe.concurrent('Generator', () => {
   it('generates an empty algorithm', () => {
     const algorithm = generate({ type: NodeTypes.Algorithm, body: [] });
 
-    expect(algorithm).toEqual('');
+    assert.strictEqual(algorithm, '');
   });
 
   it('generates a sequence', () => {
@@ -30,7 +32,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("R U R' U R U2 R'");
+    assert.equal(algorithm, "R U R' U R U2 R'");
   });
 
   it('generates a conjugate', () => {
@@ -55,7 +57,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("[R U R': D2]");
+    assert.equal(algorithm, "[R U R': D2]");
   });
 
   it('generates a commutator', () => {
@@ -80,7 +82,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("[R U R', D2]");
+    assert.equal(algorithm, "[R U R', D2]");
   });
 
   it('generates a repeating group', () => {
@@ -105,7 +107,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("(R U R' U')6");
+    assert.equal(algorithm, "(R U R' U')6");
   });
 
   it('generates a complex algorithm (conjugate with nested commutator)', () => {
@@ -141,7 +143,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("[z': [R U' R', D']]");
+    assert.equal(algorithm, "[z': [R U' R', D']]");
   });
 
   it('generates a complex algorithm (multiple conjugates)', () => {
@@ -197,7 +199,7 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("[U': [R D' R': U] [D' R D R': U']]");
+    assert.equal(algorithm, "[U': [R D' R': U] [D' R D R': U']]");
   });
 
   it('generates a complex algorithm (nested repeating group)', () => {
@@ -233,6 +235,6 @@ describe('Generator', () => {
       ],
     });
 
-    expect(algorithm).toEqual("[M': (U M' U M)2]");
+    assert.equal(algorithm, "[M': (U M' U M)2]");
   });
 });

@@ -1,18 +1,20 @@
+import { assert, describe, it } from 'vitest';
+
 import { lex, TokenTypes } from '../Lexer';
 
-describe('Lexer', () => {
+describe.concurrent('Lexer', () => {
   it('scans an empty string', () => {
     const input = '';
     const tokens = lex(input);
 
-    expect(tokens).toEqual([]);
+    assert.deepEqual(tokens, []);
   });
 
   it('scans a sequence', () => {
     const input = "R U R' U R U2 R'";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
       { type: TokenTypes.Turn, value: "R'" },
@@ -27,7 +29,7 @@ describe('Lexer', () => {
     const input = "[R U R': D2]";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -42,7 +44,7 @@ describe('Lexer', () => {
     const input = "[R U R', D2]";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -57,7 +59,7 @@ describe('Lexer', () => {
     const input = "(R U R' U')6";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.ParenthesisOpen, value: '(' },
       { type: TokenTypes.Turn, value: 'R' },
       { type: TokenTypes.Turn, value: 'U' },
@@ -72,7 +74,7 @@ describe('Lexer', () => {
     const input = "[z': [R U' R', D']]";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "z'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -91,7 +93,7 @@ describe('Lexer', () => {
     const input = "[U': [R D' R': U] [D' R D R': U']]";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "U'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -118,7 +120,7 @@ describe('Lexer', () => {
     const input = "[M': (U M' U M)2]";
     const tokens = lex(input);
 
-    expect(tokens).toEqual([
+    assert.deepEqual(tokens, [
       { type: TokenTypes.BracketOpen, value: '[' },
       { type: TokenTypes.Turn, value: "M'" },
       { type: TokenTypes.SeperatorConjugate, value: ':' },
@@ -136,50 +138,48 @@ describe('Lexer', () => {
   it('allows outer layer turns', () => {
     const input = "U F' R2 D B' L2";
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows wide layer turns', () => {
     const input = "u f' r2 d b' l2";
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows slice layer turns', () => {
     const input = "M E' S2";
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows rotations', () => {
     const input = "x y' z2";
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows commutators and conjugate notation', () => {
     const input = '[:,]';
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows repeating group notation', () => {
     const input = '()4';
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('allows whitespace characters', () => {
     const input = ' \f\n\r\t\v';
 
-    expect(() => lex(input)).not.toThrow();
+    assert.doesNotThrow(() => lex(input));
   });
 
   it('throws when encountering an invalid character', () => {
     const input = "R U R' ?";
 
-    expect(() => lex(input)).toThrowError(
-      "Invalid character '?' at position 8."
-    );
+    assert.throws(() => lex(input), /invalid character/i);
   });
 });

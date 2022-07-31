@@ -1,14 +1,16 @@
+import { assert, describe, it } from 'vitest';
+
 import { TokenTypes } from '../Lexer';
 import { Direction, NodeTypes, parse } from '../Parser';
 import { turn } from '../Turn';
 
 const { CW, CCW, Double } = Direction;
 
-describe('Parser', () => {
+describe.concurrent('Parser', () => {
   it('parses an empty token list', () => {
     const ast = parse([]);
 
-    expect(ast).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    assert.deepEqual(ast, { type: NodeTypes.Algorithm, body: [] });
   });
 
   it('parses a sequence', () => {
@@ -22,7 +24,7 @@ describe('Parser', () => {
       { type: TokenTypes.Turn, value: "R'" },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -52,7 +54,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -85,7 +87,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -118,7 +120,7 @@ describe('Parser', () => {
       { type: TokenTypes.Multiplier, value: '6' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -155,7 +157,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -211,7 +213,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -279,7 +281,7 @@ describe('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    expect(ast).toEqual({
+    assert.deepEqual(ast, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -350,14 +352,12 @@ describe('Parser', () => {
       { type: TokenTypes.Multiplier, value: '2' },
     ];
 
-    expect(() => parse(tokens1)).toThrow('Unexpected end of input.');
-    expect(() => parse(tokens2)).toThrow('Unexpected end of input.');
-    expect(() => parse(tokens3)).toThrow('Unexpected token , at position 2.');
-    expect(() => parse(tokens4)).toThrow(
-      'Missing seperator : or , inside brackets.'
-    );
-    expect(() => parse(tokens5)).toThrow('Unexpected end of input.');
-    expect(() => parse(tokens6)).toThrow('Unexpected token ) at position 2.');
+    assert.throws(() => parse(tokens1), /unexpected end of input/i);
+    assert.throws(() => parse(tokens2), /unexpected end of input/i);
+    assert.throws(() => parse(tokens3), /unexpected token/i);
+    assert.throws(() => parse(tokens4), /missing seperator/i);
+    assert.throws(() => parse(tokens5), /unexpected end of input/i);
+    assert.throws(() => parse(tokens6), /unexpected token/i);
   });
 
   it('throws when encountering en empty part', () => {
@@ -381,13 +381,9 @@ describe('Parser', () => {
       { type: TokenTypes.Multiplier, value: '2' },
     ];
 
-    expect(() => parse(tokens1)).toThrow(
-      "Left side of conjugate can't be empty."
-    );
-    expect(() => parse(tokens2)).toThrow(
-      "Right side of commutator can't be empty."
-    );
-    expect(() => parse(tokens3)).toThrow("Repeating group can't be empty.");
+    assert.throws(() => parse(tokens1), /left side of conjugate/i);
+    assert.throws(() => parse(tokens2), /right side of commutator/i);
+    assert.throws(() => parse(tokens3), /repeating group/i);
   });
 
   it('throws when encountering missing multiplier', () => {
@@ -397,8 +393,9 @@ describe('Parser', () => {
       { type: TokenTypes.ParenthesisClose, value: ')' },
     ];
 
-    expect(() => parse(tokens)).toThrow(
-      'Repeating group must be followed by a multiplier.'
+    assert.throws(
+      () => parse(tokens),
+      /repeating group must be followed by a multiplier/i
     );
   });
 });

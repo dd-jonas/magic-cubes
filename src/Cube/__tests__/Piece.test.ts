@@ -1,23 +1,25 @@
+import { assert, describe, it } from 'vitest';
+
 import { CornerPiece, EdgePiece } from '../Piece';
 
-describe('Piece', () => {
+describe.concurrent('Piece', () => {
   it('twists corner pieces', () => {
     const corner = new CornerPiece('UBL');
 
-    expect(corner.orientation).toBe(0);
+    assert.equal(corner.orientation, 0);
 
     corner.twist(5);
 
-    expect(corner.orientation).toBe(2);
+    assert.equal(corner.orientation, 2);
   });
 
   it('flips edge pieces', () => {
     const edge = new EdgePiece('UB');
 
-    expect(edge.orientation).toBe(0);
+    assert.equal(edge.orientation, 0);
 
     edge.flip();
 
-    expect(edge.orientation).toBe(1);
+    assert.equal(edge.orientation, 1);
   });
 });

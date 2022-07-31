@@ -1,3 +1,5 @@
+import { assert, describe, it, vi } from 'vitest';
+
 import { AST, Direction, NodeTypes } from '../Parser';
 import { traverse } from '../Traverser';
 import { turn } from '../Turn';
@@ -5,7 +7,7 @@ import { Visitor } from '../visitors';
 
 const { CW, CCW } = Direction;
 
-describe('Traverser', () => {
+describe.concurrent('Traverser', () => {
   const order: Array<NodeTypes> = [];
 
   it('calls visitor methods in the correct order', () => {
@@ -48,32 +50,32 @@ describe('Traverser', () => {
     };
 
     const visitor: Visitor = {
-      [NodeTypes.Turn]: jest.fn((node) => {
+      [NodeTypes.Turn]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
 
-      [NodeTypes.Sequence]: jest.fn((node) => {
+      [NodeTypes.Sequence]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
 
-      [NodeTypes.Conjugate]: jest.fn((node) => {
+      [NodeTypes.Conjugate]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
 
-      [NodeTypes.Commutator]: jest.fn((node) => {
+      [NodeTypes.Commutator]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
 
-      [NodeTypes.Repeating]: jest.fn((node) => {
+      [NodeTypes.Repeating]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
 
-      [NodeTypes.Algorithm]: jest.fn((node) => {
+      [NodeTypes.Algorithm]: vi.fn((node) => {
         order.push(node.type);
         return node;
       }),
@@ -81,7 +83,7 @@ describe('Traverser', () => {
 
     traverse(ast, visitor);
 
-    expect(order).toEqual([
+    assert.deepEqual(order, [
       NodeTypes.Turn,
       NodeTypes.Sequence,
       NodeTypes.Turn,

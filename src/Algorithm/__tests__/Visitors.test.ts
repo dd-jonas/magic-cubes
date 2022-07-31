@@ -1,10 +1,12 @@
+import { assert, describe, it } from 'vitest';
+
 import { AST, Direction, NodeTypes } from '../Parser';
 import { clean, sequence, validate } from '../Traverser';
 import { turn } from '../Turn';
 
 const { CW, CCW, Double } = Direction;
 
-describe('Cleaner visitor', () => {
+describe.concurrent('Cleaner visitor', () => {
   it('does nothing when the input is already clean', () => {
     const ast: AST = {
       type: NodeTypes.Algorithm,
@@ -55,7 +57,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual(ast);
+    assert.deepEqual(cleaned, ast);
   });
 
   it('sorts parallel turns', () => {
@@ -79,7 +81,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -117,7 +119,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -159,7 +161,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -192,7 +194,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -222,7 +224,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    assert.deepEqual(cleaned, { type: NodeTypes.Algorithm, body: [] });
   });
 
   it('removes repeating groups with multiplier 0', () => {
@@ -244,7 +246,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    assert.deepEqual(cleaned, { type: NodeTypes.Algorithm, body: [] });
   });
 
   it('flattens repeating groups with multiplier 1', () => {
@@ -282,7 +284,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -328,7 +330,7 @@ describe('Cleaner visitor', () => {
 
     const cleaned = clean(ast);
 
-    expect(cleaned).toEqual({
+    assert.deepEqual(cleaned, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -364,8 +366,8 @@ describe('Validator visitor', () => {
       ],
     };
 
-    expect(() => validate(ast1)).not.toThrow();
-    expect(() => validate(ast2)).toThrow();
+    assert.doesNotThrow(() => validate(ast1));
+    assert.throws(() => validate(ast2), /higher than 6/i);
   });
 });
 
@@ -383,7 +385,7 @@ describe('Sequencer visitor', () => {
 
     const sequenced = sequence(ast);
 
-    expect(sequenced).toEqual(ast);
+    assert.deepEqual(sequenced, ast);
   });
 
   it('flattens multiple sequences', () => {
@@ -403,7 +405,7 @@ describe('Sequencer visitor', () => {
 
     const sequenced = sequence(ast);
 
-    expect(sequenced).toEqual({
+    assert.deepEqual(sequenced, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -455,7 +457,7 @@ describe('Sequencer visitor', () => {
 
     const sequenced = sequence(ast);
 
-    expect(sequenced).toEqual({
+    assert.deepEqual(sequenced, {
       type: NodeTypes.Algorithm,
       body: [
         {

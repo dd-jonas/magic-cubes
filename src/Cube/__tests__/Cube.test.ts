@@ -1,17 +1,19 @@
+import { assert, describe, it } from 'vitest';
+
 import { Algorithm } from '../../Algorithm/Algorithm';
 import { Cube } from '../Cube';
 
-describe('Cube', () => {
+describe.concurrent('Cube', () => {
   it('creates a solved cube', () => {
     const cube = new Cube();
 
-    expect(cube.isSolved).toBe(true);
+    assert.isTrue(cube.isSolved);
   });
 
   it('scrambles and solves the cube', () => {
     const cube = new Cube("U r M' D2 x' R f' E2 u d' y' z2 F2 B2 l b L S'");
 
-    expect(cube.isSolved).toBe(false);
+    assert.isFalse(cube.isSolved);
 
     cube.solve("x' z' U' R' F2 L B' L' B2"); // Cross
     cube.solve("U' R U' R2 U' R"); // F2L 1
@@ -21,7 +23,7 @@ describe('Cube', () => {
     cube.solve("U R U2 R' U' R U' R'"); // OLL
     cube.solve("U2 l' U R' D2 R U' R' D2 R l U'"); // PLL
 
-    expect(cube.isSolved).toBe(true);
+    assert.isTrue(cube.isSolved);
   });
 
   it('accepts an Algorithm instance as input', () => {
@@ -31,36 +33,36 @@ describe('Cube', () => {
 
     cube.solve(solve);
 
-    expect(cube.isSolved).toBe(true);
+    assert.isTrue(cube.isSolved);
   });
 
   it('checks if the cube is oriented', () => {
     const cube = new Cube();
 
-    expect(cube.isOriented).toEqual(true);
+    assert.isTrue(cube.isOriented);
 
     cube.apply('x y z');
 
-    expect(cube.isOriented).toEqual(false);
+    assert.isFalse(cube.isOriented);
   });
 
   it('resets orientation', () => {
     const cube = new Cube('x y z');
 
-    expect(cube.orientation.getFace('U')).toEqual('D');
-    expect(cube.orientation.getFace('F')).toEqual('R');
-    expect(cube.orientation.getFace('R')).toEqual('F');
-    expect(cube.orientation.getFace('D')).toEqual('U');
-    expect(cube.orientation.getFace('B')).toEqual('L');
-    expect(cube.orientation.getFace('L')).toEqual('B');
+    assert.equal(cube.orientation.getFace('U'), 'D');
+    assert.equal(cube.orientation.getFace('F'), 'R');
+    assert.equal(cube.orientation.getFace('R'), 'F');
+    assert.equal(cube.orientation.getFace('D'), 'U');
+    assert.equal(cube.orientation.getFace('B'), 'L');
+    assert.equal(cube.orientation.getFace('L'), 'B');
 
     cube.orient();
 
-    expect(cube.orientation.getFace('U')).toEqual('U');
-    expect(cube.orientation.getFace('F')).toEqual('F');
-    expect(cube.orientation.getFace('R')).toEqual('R');
-    expect(cube.orientation.getFace('D')).toEqual('D');
-    expect(cube.orientation.getFace('B')).toEqual('B');
-    expect(cube.orientation.getFace('L')).toEqual('L');
+    assert.equal(cube.orientation.getFace('U'), 'U');
+    assert.equal(cube.orientation.getFace('F'), 'F');
+    assert.equal(cube.orientation.getFace('R'), 'R');
+    assert.equal(cube.orientation.getFace('D'), 'D');
+    assert.equal(cube.orientation.getFace('B'), 'B');
+    assert.equal(cube.orientation.getFace('L'), 'L');
   });
 });

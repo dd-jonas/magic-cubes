@@ -1,7 +1,9 @@
+import { assert, describe, it } from 'vitest';
+
 import { Cube } from '../Cube';
 import { CubeModel } from '../CubeModel';
 
-describe('CubeModel', () => {
+describe.concurrent('CubeModel', () => {
   const colorScheme = {
     U: 'white',
     F: 'green',
@@ -17,7 +19,7 @@ describe('CubeModel', () => {
     const model = new CubeModel(cube, colorScheme);
 
     // prettier-ignore
-    expect(model.colors()).toEqual({
+    assert.deepEqual(model.colors(),{
       U: ['white', 'white', 'white', 'white', 'white', 'white', 'white', 'white', 'white'],
       D: ['yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow'],
       F: ['green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green'],
@@ -35,7 +37,7 @@ describe('CubeModel', () => {
     const model = new CubeModel(cube, colorScheme);
 
     // prettier-ignore
-    expect(model.colors()).toEqual({
+    assert.deepEqual(model.colors(),{
       U: ['orange', 'yellow', 'orange', 'red', 'white', 'green', 'red', 'yellow', 'red'],
       D: ['orange', 'green', 'red', 'orange', 'yellow', 'blue', 'yellow', 'green', 'yellow'],
       F: ['white', 'blue', 'white', 'blue', 'green', 'green', 'green', 'yellow', 'yellow'],
@@ -52,7 +54,6 @@ describe('CubeModel', () => {
     const cube4 = new Cube('R U F D2 y2');
     const cube5 = new Cube('R U F D2 x');
     const cube6 = new Cube("R U F D2 x'");
-    const cube7 = new Cube('R U F D2 x2');
 
     const model1 = new CubeModel(cube1, colorScheme);
     const model2 = new CubeModel(cube2, colorScheme);
@@ -60,10 +61,9 @@ describe('CubeModel', () => {
     const model4 = new CubeModel(cube4, colorScheme);
     const model5 = new CubeModel(cube5, colorScheme);
     const model6 = new CubeModel(cube6, colorScheme);
-    const model7 = new CubeModel(cube7, colorScheme);
 
     // prettier-ignore
-    expect(model1.colors()).toEqual({
+    assert.deepEqual(model1.colors(), {
       U: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
       D: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
       F: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
@@ -73,7 +73,7 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model2.colors()).toEqual({
+    assert.deepEqual(model2.colors(), {
       U: ['orange', 'white', 'white', 'orange', 'white', 'white', 'yellow', 'white', 'white'],
       D: ['yellow', 'yellow', 'red', 'yellow', 'yellow', 'red', 'blue', 'blue', 'white'],
       F: ['green', 'blue', 'blue', 'green', 'red', 'red', 'orange', 'orange', 'blue'],
@@ -83,7 +83,7 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model3.colors()).toEqual({
+    assert.deepEqual(model3.colors(), {
       U: ['white', 'white', 'yellow', 'white', 'white', 'orange', 'white', 'white', 'orange'],
       D: ['white', 'blue', 'blue', 'red', 'yellow', 'yellow', 'red', 'yellow', 'yellow'],
       F: ['green', 'green', 'yellow', 'orange', 'orange', 'yellow', 'green', 'red', 'red'],
@@ -93,7 +93,7 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model4.colors()).toEqual({
+    assert.deepEqual(model4.colors(), {
       U: ['yellow', 'orange', 'orange', 'white', 'white', 'white', 'white', 'white', 'white'],
       D: ['red', 'red', 'white', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'blue'],
       F: ['orange', 'orange', 'orange', 'white', 'blue', 'blue', 'yellow', 'yellow', 'red'],
@@ -103,7 +103,7 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model5.colors()).toEqual({
+    assert.deepEqual(model5.colors(), {
       U: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
       D: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
       F: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
@@ -113,34 +113,13 @@ describe('CubeModel', () => {
     });
 
     // prettier-ignore
-    expect(model6.colors()).toEqual({
+    assert.deepEqual(model6.colors(), {
       U: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
       D: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
       F: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
       B: ['red', 'red', 'white', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'blue'],
       L: ['green', 'orange', 'green', 'red', 'orange', 'green', 'red', 'yellow', 'yellow'],
       R: ['blue', 'red', 'blue', 'blue', 'red', 'orange', 'green', 'green', 'orange'],
-    });
-
-    // Ref only, remove
-    // prettier-ignore
-    expect(model1.colors()).toEqual({
-      U: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
-      D: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
-      F: ['green', 'green', 'red', 'green', 'green', 'red', 'white', 'blue', 'blue'],
-      B: ['orange', 'orange', 'orange', 'white', 'blue', 'blue', 'yellow', 'yellow', 'red'],
-      L: ['green', 'green', 'yellow', 'orange', 'orange', 'yellow', 'green', 'red', 'red'],
-      R: ['green', 'blue', 'blue', 'green', 'red', 'red', 'orange', 'orange', 'blue'],
-    });
-
-    // prettier-ignore
-    expect(model7.colors()).toEqual({
-      U: ['blue', 'yellow', 'yellow', 'blue', 'yellow', 'yellow', 'white', 'red', 'red'],
-      D: ['white', 'white', 'white', 'white', 'white', 'white', 'orange', 'orange', 'yellow'],
-      F: ['red', 'yellow', 'yellow', 'blue', 'blue', 'white', 'orange', 'orange', 'orange'],
-      B: ['blue', 'blue', 'white', 'red', 'green', 'green', 'red', 'green', 'green'],
-      L: ['red', 'red', 'green', 'yellow', 'orange', 'orange', 'yellow', 'green', 'green'],
-      R: ['blue', 'orange', 'orange', 'red', 'red', 'green', 'blue', 'blue', 'green'],
     });
   });
 });

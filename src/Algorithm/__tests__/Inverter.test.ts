@@ -1,14 +1,16 @@
+import { assert, describe, it } from 'vitest';
+
 import { invert } from '../Inverter';
 import { Direction, NodeTypes } from '../Parser';
 import { turn } from '../Turn';
 
 const { CW, CCW, Double } = Direction;
 
-describe('Inverter', () => {
+describe.concurrent('Inverter', () => {
   it('inverts an empty algorithm', () => {
     const inverse = invert({ type: NodeTypes.Algorithm, body: [] });
 
-    expect(inverse).toEqual({ type: NodeTypes.Algorithm, body: [] });
+    assert.deepEqual(inverse, { type: NodeTypes.Algorithm, body: [] });
   });
 
   it('inverts a sequence', () => {
@@ -30,7 +32,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -71,7 +73,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -115,7 +117,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -159,7 +161,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -214,7 +216,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -300,7 +302,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {
@@ -386,7 +388,7 @@ describe('Inverter', () => {
       ],
     });
 
-    expect(inverse).toEqual({
+    assert.deepEqual(inverse, {
       type: NodeTypes.Algorithm,
       body: [
         {

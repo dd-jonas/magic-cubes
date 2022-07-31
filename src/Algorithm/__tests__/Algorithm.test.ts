@@ -1,24 +1,26 @@
+import { assert, describe, it } from 'vitest';
+
 import { Algorithm } from '../Algorithm';
 import { Direction, NodeTypes } from '../Parser';
 
-describe('Algorithm constructor', () => {
+describe.concurrent('Algorithm constructor', () => {
   it('handles empty input', () => {
     const alg = new Algorithm('');
 
-    expect(() => {
+    assert.doesNotThrow(() => {
       alg.clean;
       alg.inverse;
       alg.rotationless;
       alg.sequence;
       alg.turns;
-    }).not.toThrow();
+    });
   });
 
   it('throws when exceeding the max input length', () => {
     const longAlg =
       'R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U ';
 
-    expect(() => new Algorithm(longAlg)).toThrow();
+    assert.throws(() => new Algorithm(longAlg));
   });
 
   it('cleans the input', () => {
@@ -26,7 +28,7 @@ describe('Algorithm constructor', () => {
 
     const alg = new Algorithm(input);
 
-    expect(alg.clean).toEqual("(r U)2 R2 U'");
+    assert.equal(alg.clean, "(r U)2 R2 U'");
   });
 
   it('inverses the input', () => {
@@ -34,7 +36,7 @@ describe('Algorithm constructor', () => {
 
     const alg = new Algorithm(input);
 
-    expect(alg.inverse).toEqual("[D2, r U r']");
+    assert.equal(alg.inverse, "[D2, r U r']");
   });
 
   it('sequences the input', () => {
@@ -44,8 +46,8 @@ describe('Algorithm constructor', () => {
     const alg1 = new Algorithm(input1);
     const alg2 = new Algorithm(input2);
 
-    expect(alg1.sequence).toEqual("M' U M' U M U M' U M2");
-    expect(alg2.sequence).toEqual("S U' R' E R2 E' R' U S'");
+    assert.equal(alg1.sequence, "M' U M' U M U M' U M2");
+    assert.equal(alg2.sequence, "S U' R' E R2 E' R' U S'");
   });
 
   it('sequences the input without rotations', () => {
@@ -55,8 +57,8 @@ describe('Algorithm constructor', () => {
     const alg1 = new Algorithm(input1);
     const alg2 = new Algorithm(input2);
 
-    expect(alg1.rotationless).toEqual("L F R' F' L' F R F'");
-    expect(alg2.rotationless).toEqual("F' B L' U' R' L F2 R L' U' L F B'");
+    assert.equal(alg1.rotationless, "L F R' F' L' F R F'");
+    assert.equal(alg2.rotationless, "F' B L' U' R' L F2 R L' U' L F B'");
   });
 
   it('creates sequenced turn nodes', () => {
@@ -64,7 +66,7 @@ describe('Algorithm constructor', () => {
 
     const alg = new Algorithm(input);
 
-    expect(alg.turns).toEqual([
+    assert.deepEqual(alg.turns, [
       { type: NodeTypes.Turn, move: 'r', direction: Direction.CW },
       { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
       { type: NodeTypes.Turn, move: 'r', direction: Direction.CCW },
