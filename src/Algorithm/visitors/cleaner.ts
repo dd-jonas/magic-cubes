@@ -29,9 +29,6 @@ export const cleaner: Visitor = {
     const merge = (turns: TurnNode[]): TurnNode[] => {
       const orientation = new Orientation();
 
-      console.log('--- Turns');
-      console.log(turns);
-
       const groupedByParallel = turns.reduce(
         (groups: TurnNode[][], turn: TurnNode) => {
           const lastGroup = groups[groups.length - 1];
@@ -61,9 +58,6 @@ export const cleaner: Visitor = {
         []
       );
 
-      console.log('--- Grouped by parallel');
-      console.log(groupedByParallel);
-
       const groupedByMove = groupedByParallel.flatMap((group) => {
         const turns = group.filter((turn) => !Turn.isRotationTurn(turn));
         const rotations = group.filter((turn) => Turn.isRotationTurn(turn));
@@ -82,9 +76,6 @@ export const cleaner: Visitor = {
           .map((move) => group.filter((turn) => turn.move === move))
           .concat(rotations.map((rotation) => [rotation]));
       });
-
-      console.log('--- Grouped by move');
-      console.log(groupedByMove);
 
       const merged = groupedByMove
         .map((group) => {
