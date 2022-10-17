@@ -4,6 +4,8 @@ import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
 
 //
+// TODO: Rename to 'simplifier'?
+//
 // Cleaner rules:
 //
 //   1. Sequence: Merge same turns
@@ -26,6 +28,9 @@ export const cleaner: Visitor = {
     // 1. Merge same turns
     const merge = (turns: TurnNode[]): TurnNode[] => {
       const orientation = new Orientation();
+
+      console.log('--- Turns');
+      console.log(turns);
 
       const groupedByParallel = turns.reduce(
         (groups: TurnNode[][], turn: TurnNode) => {
@@ -56,9 +61,15 @@ export const cleaner: Visitor = {
         []
       );
 
+      console.log('--- Grouped by parallel');
+      console.log(groupedByParallel);
+
       const groupedByMove = groupedByParallel.flatMap((group) => {
+        const turns = group.filter((turn) => !Turn.isRotationTurn(turn));
+        const rotations = group.filter((turn) => Turn.isRotationTurn(turn));
+
         // Get all unique moves
-        const moves = [...new Set(group.map((turn) => turn.move))];
+        const moves = [...new Set(turns.map((turn) => turn.move))];
 
         const sortOrder = ['UFR', 'DBL', 'ufr', 'dbl', 'MES', 'xyz'];
 
@@ -68,8 +79,12 @@ export const cleaner: Visitor = {
             const indexB = sortOrder.findIndex((v) => v.includes(b));
             return indexA - indexB;
           })
-          .map((move) => group.filter((turn) => turn.move === move));
+          .map((move) => group.filter((turn) => turn.move === move))
+          .concat(rotations.map((rotation) => [rotation]));
       });
+
+      console.log('--- Grouped by move');
+      console.log(groupedByMove);
 
       const merged = groupedByMove
         .map((group) => {

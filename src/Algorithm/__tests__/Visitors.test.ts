@@ -99,7 +99,7 @@ describe.concurrent('Cleaner visitor', () => {
     });
   });
 
-  it("does't sort rotations", () => {
+  it("doesn't sort rotations", () => {
     // M z y x S' -> M2 z y x
     const ast: AST = {
       type: NodeTypes.Algorithm,
@@ -130,6 +130,31 @@ describe.concurrent('Cleaner visitor', () => {
             turn('y', CW),
             turn('x', CW),
           ],
+        },
+      ],
+    });
+  });
+
+  it("doesn't sort rotations (2)", () => {
+    // x y x -> x y x
+    const ast: AST = {
+      type: NodeTypes.Algorithm,
+      body: [
+        {
+          type: NodeTypes.Sequence,
+          turns: [turn('x', CW), turn('y', CW), turn('x', CW)],
+        },
+      ],
+    };
+
+    const cleaned = clean(ast);
+
+    assert.deepEqual(cleaned, {
+      type: NodeTypes.Algorithm,
+      body: [
+        {
+          type: NodeTypes.Sequence,
+          turns: [turn('x', CW), turn('y', CW), turn('x', CW)],
         },
       ],
     });
