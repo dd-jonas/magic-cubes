@@ -24,9 +24,10 @@
     "format": "prettier src --write",
     "lint": "eslint src --ext .ts --fix",
     "test": "vitest --ui",
-    "coverage": "vitest run --coverage",
-    "prepublishOnly": "yarn format && yarn lint && vitest && yarn build",
-    "preversion": "yarn format && yarn lint && vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:ci": "vitest run",
+    "prepublishOnly": "yarn format && yarn lint && test:ci && yarn build",
+    "preversion": "yarn format && yarn lint && test:ci",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
   },
