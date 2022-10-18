@@ -136,13 +136,13 @@ describe.concurrent('Cleaner visitor', () => {
   });
 
   it("doesn't sort rotations (2)", () => {
-    // x y x -> x y x
+    // x y y x -> x y2 x
     const ast: AST = {
       type: NodeTypes.Algorithm,
       body: [
         {
           type: NodeTypes.Sequence,
-          turns: [turn('x', CW), turn('y', CW), turn('x', CW)],
+          turns: [turn('x', CW), turn('y', CW), turn('y', CW), turn('x', CW)],
         },
       ],
     };
@@ -154,7 +154,7 @@ describe.concurrent('Cleaner visitor', () => {
       body: [
         {
           type: NodeTypes.Sequence,
-          turns: [turn('x', CW), turn('y', CW), turn('x', CW)],
+          turns: [turn('x', CW), turn('y', Double), turn('x', CW)],
         },
       ],
     });

@@ -1,4 +1,5 @@
 import { Orientation } from '../../utils/Orientation';
+import { generate } from '../Generator';
 import { NodeTypes, TurnNode } from '../Parser';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
@@ -62,19 +63,36 @@ export const cleaner: Visitor = {
         const turns = group.filter((turn) => !Turn.isRotationTurn(turn));
         const rotations = group.filter((turn) => Turn.isRotationTurn(turn));
 
-        // Get all unique moves
-        const moves = [...new Set(turns.map((turn) => turn.move))];
-
+        // Get all unique moves in a fixed order
         const sortOrder = ['UFR', 'DBL', 'ufr', 'dbl', 'MES', 'xyz'];
+        const moves = [...new Set(turns.map((turn) => turn.move))].sort(
+          (a, b) =>
+            sortOrder.findIndex((v) => v.includes(a)) -
+            sortOrder.findIndex((v) => v.includes(b))
+        );
 
-        return moves
-          .sort((a, b) => {
-            const indexA = sortOrder.findIndex((v) => v.includes(a));
-            const indexB = sortOrder.findIndex((v) => v.includes(b));
-            return indexA - indexB;
-          })
-          .map((move) => group.filter((turn) => turn.move === move))
-          .concat(rotations.map((rotation) => [rotation]));
+        const groupedTurns = moves.map((move) =>
+          group.filter((turn) => turn.move === move)
+        );
+
+        const groupedRotations = rotations.reduce(
+          (groups: TurnNode[][], turn) => {
+            const lastGroup = groups[groups.length - 1];
+
+            if (!lastGroup) return [[turn]];
+
+            if (turn.move === lastGroup[0].move) {
+              lastGroup.push(turn);
+            } else {
+              groups.push([turn]);
+            }
+
+            return groups;
+          },
+          []
+        );
+
+        return [...groupedTurns, ...groupedRotations];
       });
 
       const merged = groupedByMove
@@ -95,12 +113,12 @@ export const cleaner: Visitor = {
       return merged;
     };
 
-    // If anything was merged, repeat ("F R U U' R' F" -> "F R R' F" -> "F2")
-    const turnsToString = (turns: TurnNode[]) =>
-      turns.map((turn) => `${turn.move}${turn.direction}`).join();
-
     let merged = merge(node.turns);
-    while (turnsToString(merged) !== turnsToString(merge(merged))) {
+
+    while (
+      generate({ type: NodeTypes.Algorithm, body: merged }) !==
+      generate({ type: NodeTypes.Algorithm, body: merge(merged) })
+    ) {
       merged = merge(merged);
     }
 
