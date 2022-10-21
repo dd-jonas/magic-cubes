@@ -56,95 +56,6 @@ describe.concurrent('Cleaner visitor', () => {
     assert.deepEqual(cleaned, ast);
   });
 
-  it('sorts parallel turns', () => {
-    // M R2 r E d' R2 -> R2 r M d' E R2
-    const ast: AST = {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [
-            turn('M', CW),
-            turn('R', Double),
-            turn('r', CW),
-            turn('E', CW),
-            turn('d', CCW),
-            turn('R', Double),
-          ],
-        },
-      ],
-    };
-
-    const cleaned = clean(ast);
-
-    assert.deepEqual(cleaned, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [
-            turn('R', Double),
-            turn('r', CW),
-            turn('M', CW),
-            turn('d', CCW),
-            turn('E', CW),
-            turn('R', Double),
-          ],
-        },
-      ],
-    });
-  });
-
-  it("doesn't sort rotations", () => {
-    // M z y x S' -> M2 z y x
-    const ast: AST = {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [turn('M', CW), turn('z', CW), turn('y', CW), turn('x', CW), turn('S', CCW)],
-        },
-      ],
-    };
-
-    const cleaned = clean(ast);
-
-    assert.deepEqual(cleaned, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [turn('M', Double), turn('z', CW), turn('y', CW), turn('x', CW)],
-        },
-      ],
-    });
-  });
-
-  it("doesn't sort rotations (2)", () => {
-    // x y y x -> x y2 x
-    const ast: AST = {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [turn('x', CW), turn('y', CW), turn('y', CW), turn('x', CW)],
-        },
-      ],
-    };
-
-    const cleaned = clean(ast);
-
-    assert.deepEqual(cleaned, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [turn('x', CW), turn('y', Double), turn('x', CW)],
-        },
-      ],
-    });
-  });
-
   it('merges consecutive turns of a sequence', () => {
     // R2 R' R2 U2 U' L L' R U U U -> R' U R U'
     const ast: AST = {
@@ -177,39 +88,6 @@ describe.concurrent('Cleaner visitor', () => {
         {
           type: NodeTypes.Sequence,
           turns: [turn('R', CCW), turn('U', CW), turn('R', CW), turn('U', CCW)],
-        },
-      ],
-    });
-  });
-
-  it('merges non-adjacent turns of a sequence', () => {
-    // "R F B2 y L' R F" -> "R B' y F"
-    const ast: AST = {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [
-            turn('R', CW),
-            turn('F', CW),
-            turn('B', Double),
-            turn('y', CW),
-            turn('L', CCW),
-            turn('R', CW),
-            turn('F', CW),
-          ],
-        },
-      ],
-    };
-
-    const cleaned = clean(ast);
-
-    assert.deepEqual(cleaned, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [turn('R', CW), turn('B', CCW), turn('y', CW), turn('F', CW)],
         },
       ],
     });

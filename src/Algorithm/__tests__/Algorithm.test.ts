@@ -57,7 +57,7 @@ describe.concurrent('Algorithm constructor', () => {
     const alg2 = new Algorithm(input2);
 
     assert.equal(alg1.rotationless, "L F R' F' L' F R F'");
-    assert.equal(alg2.rotationless, "F' B L' U' R' L F2 R L' U' L F B'");
+    assert.equal(alg2.rotationless, "F' B L' U' L R' F2 L' R U' L F B'");
   });
 
   it('creates sequenced turn nodes', () => {
