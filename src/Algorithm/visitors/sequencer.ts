@@ -15,11 +15,7 @@ export const sequencer: Visitor = {
   [NodeTypes.Sequence]: (node) => node,
 
   [NodeTypes.Conjugate]: (node) => {
-    return [
-      ...node.A,
-      ...node.B,
-      ...node.A.map((node) => invertSequence(node as SequenceNode)),
-    ];
+    return [...node.A, ...node.B, ...node.A.map((node) => invertSequence(node as SequenceNode))];
   },
 
   [NodeTypes.Commutator]: (node) => {

@@ -1,10 +1,5 @@
 import { Token, TokenTypes } from './Lexer';
-import {
-  FaceTurnNode,
-  RotationTurnNode,
-  SliceTurnNode,
-  WideTurnNode,
-} from './Turn';
+import { FaceTurnNode, RotationTurnNode, SliceTurnNode, WideTurnNode } from './Turn';
 
 export type FaceMove = 'U' | 'F' | 'R' | 'D' | 'B' | 'L';
 export type WideMove = 'u' | 'f' | 'r' | 'd' | 'b' | 'l';
@@ -27,11 +22,7 @@ export enum NodeTypes {
   Algorithm = 'algorithm',
 }
 
-export type TurnNode =
-  | FaceTurnNode
-  | WideTurnNode
-  | SliceTurnNode
-  | RotationTurnNode;
+export type TurnNode = FaceTurnNode | WideTurnNode | SliceTurnNode | RotationTurnNode;
 
 export type SequenceNode = {
   type: NodeTypes.Sequence;
@@ -132,9 +123,7 @@ class Parser {
       message ??
         (index === this.tokens.length
           ? 'Unexpected end of input.'
-          : `Unexpected token ${this.tokens[index].value} at position ${
-              index + 1
-            }.`)
+          : `Unexpected token ${this.tokens[index].value} at position ${index + 1}.`)
     );
   }
 
@@ -197,9 +186,7 @@ class Parser {
     }
 
     const seperator =
-      type === NodeTypes.Conjugate
-        ? TokenTypes.SeperatorConjugate
-        : TokenTypes.SeperatorCommutator;
+      type === NodeTypes.Conjugate ? TokenTypes.SeperatorConjugate : TokenTypes.SeperatorCommutator;
 
     if (
       !token ||
@@ -226,9 +213,7 @@ class Parser {
 
     if (!token || node.B.length === 0) {
       const errorMessage =
-        node.B.length === 0
-          ? `Right side of ${type} can't be empty.`
-          : undefined;
+        node.B.length === 0 ? `Right side of ${type} can't be empty.` : undefined;
       this.createError(errorMessage);
       this.restoreCheckpoint(checkpoint);
       return;
@@ -283,9 +268,7 @@ class Parser {
 
     if (!token || node.multiplicand.length === 0) {
       const errorMessage =
-        node.multiplicand.length === 0
-          ? "Repeating group can't be empty."
-          : undefined;
+        node.multiplicand.length === 0 ? "Repeating group can't be empty." : undefined;
       this.createError(errorMessage);
       this.restoreCheckpoint(checkpoint);
       return;

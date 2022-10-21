@@ -8,22 +8,14 @@ import {
   SliceMove,
   WideMove,
 } from '../../Algorithm/Parser';
-import {
-  FaceTurnNode,
-  RotationTurnNode,
-  SliceTurnNode,
-  WideTurnNode,
-} from '../../Algorithm/Turn';
+import { FaceTurnNode, RotationTurnNode, SliceTurnNode, WideTurnNode } from '../../Algorithm/Turn';
 import { Orientation } from '../Orientation';
 
 describe('Orientation', () => {
   const [x, y, z] = ['x', 'y', 'z'] as const;
   const { CW, CCW, Double } = Direction;
 
-  const rotation = (
-    move: RotationMove,
-    direction: Direction
-  ): RotationTurnNode => ({
+  const rotation = (move: RotationMove, direction: Direction): RotationTurnNode => ({
     type: NodeTypes.Turn,
     move,
     direction,
@@ -73,11 +65,7 @@ describe('Orientation', () => {
   });
 
   it('resets the orientation', () => {
-    const rotations: RotationTurnNode[] = [
-      rotation(x, CCW),
-      rotation(y, CCW),
-      rotation(z, Double),
-    ];
+    const rotations: RotationTurnNode[] = [rotation(x, CCW), rotation(y, CCW), rotation(z, Double)];
 
     const orientation = new Orientation();
     rotations.forEach((rotation) => orientation.rotate(rotation));
@@ -93,10 +81,7 @@ describe('Orientation', () => {
   });
 
   it('gets the corresponding turn based on the current orientation', () => {
-    const rotations: RotationTurnNode[] = [
-      rotation(x, CW),
-      rotation(z, Double),
-    ];
+    const rotations: RotationTurnNode[] = [rotation(x, CW), rotation(z, Double)];
 
     const orientation = new Orientation();
     rotations.forEach((rotation) => orientation.rotate(rotation));

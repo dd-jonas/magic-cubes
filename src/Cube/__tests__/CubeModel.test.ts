@@ -30,9 +30,7 @@ describe.concurrent('CubeModel', () => {
   });
 
   it('creates a color array of a scrambled cube', () => {
-    const cube = new Cube(
-      "D2 U2 B F2 D2 B D2 R2 D2 U2 R' U' B2 F2 R' U2 F L U R"
-    );
+    const cube = new Cube("D2 U2 B F2 D2 B D2 R2 D2 U2 R' U' B2 F2 R' U2 F L U R");
 
     const model = new CubeModel(cube, colorScheme);
 

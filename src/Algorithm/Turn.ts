@@ -45,10 +45,7 @@ export class Turn {
   /**
    * Map wide and slice turns to outer turns and a rotation.
    */
-  static wideAndSliceMap: Record<
-    WideMove | SliceMove,
-    Record<Direction, TurnNode[]>
-  > = {
+  static wideAndSliceMap: Record<WideMove | SliceMove, Record<Direction, TurnNode[]>> = {
     u: {
       [CW]: [turn('D', CW), turn('y', CW)],
       [CCW]: [turn('D', CCW), turn('y', CCW)],

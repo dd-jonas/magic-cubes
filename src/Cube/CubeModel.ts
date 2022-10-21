@@ -4,9 +4,7 @@ import { CornerPiece, EdgePiece, PieceName } from './Piece';
 export type Face = 'U' | 'F' | 'R' | 'D' | 'B' | 'L';
 export type CubeColors<S extends string> = Record<Face, S[]>;
 
-export class CubeModel<
-  ColorScheme extends Record<Face, string> = Record<Face, string>
-> {
+export class CubeModel<ColorScheme extends Record<Face, string> = Record<Face, string>> {
   private readonly cube: Cube;
   private readonly colorScheme: ColorScheme;
 

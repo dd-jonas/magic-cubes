@@ -1,13 +1,7 @@
 import structuredClone from '@ungap/structured-clone';
 
 import { AST, Node, NodeTypes } from './Parser';
-import {
-  cleaner,
-  rotationlessSequencer,
-  sequencer,
-  validator,
-  Visitor,
-} from './visitors';
+import { cleaner, rotationlessSequencer, sequencer, validator, Visitor } from './visitors';
 
 class Traverser {
   private visitor: Visitor;
@@ -43,9 +37,7 @@ class Traverser {
   }
 
   private traverseArray<T extends Node = Node>(nodes: T[]) {
-    return nodes
-      .flatMap((node) => this.traverseNode(node))
-      .filter(Boolean) as T[];
+    return nodes.flatMap((node) => this.traverseNode(node)).filter(Boolean) as T[];
   }
 
   run() {
@@ -62,6 +54,5 @@ export const traverse = (ast: AST, visitor: Visitor) => {
 
 export const clean = (ast: AST) => traverse(ast, cleaner);
 export const sequence = (ast: AST) => traverse(ast, sequencer);
-export const rotationless = (ast: AST) =>
-  traverse(traverse(ast, sequencer), rotationlessSequencer);
+export const rotationless = (ast: AST) => traverse(traverse(ast, sequencer), rotationlessSequencer);
 export const validate = (ast: AST) => traverse(ast, validator);

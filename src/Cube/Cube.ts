@@ -59,10 +59,7 @@ export class Cube {
     'DF', 'DR', 'DB', 'DL',
   ];
 
-  static readonly pieceLocations: Record<
-    FaceMove,
-    Record<'corners' | 'edges', number[]>
-  > = {
+  static readonly pieceLocations: Record<FaceMove, Record<'corners' | 'edges', number[]>> = {
     U: { corners: [0, 1, 2, 3], edges: [0, 1, 2, 3] },
     F: { corners: [3, 2, 5, 4], edges: [2, 5, 8, 4] },
     R: { corners: [2, 1, 6, 5], edges: [1, 6, 9, 5] },
@@ -82,8 +79,7 @@ export class Cube {
   /** Check if the cube is in the solved state. */
   get isSolved() {
     const cornersSolved = this.corners.every(
-      (corner, i) =>
-        corner.name === Cube.solvedCorners[i] && corner.orientation === 0
+      (corner, i) => corner.name === Cube.solvedCorners[i] && corner.orientation === 0
     );
     const edgesSolved = this.edges.every(
       (edge, i) => edge.name === Cube.solvedEdges[i] && edge.orientation === 0
@@ -168,9 +164,7 @@ export class Cube {
       locations.corners.forEach((l, i) => (this.corners[l] = cycledCorners[i]));
       locations.edges.forEach((l, i) => (this.edges[l] = cycledEdges[i]));
     } else if (Turn.isWideTurn(turn) || Turn.isSliceTurn(turn)) {
-      Turn.wideAndSliceMap[turn.move][turn.direction].forEach((turn) =>
-        this.turn(turn)
-      );
+      Turn.wideAndSliceMap[turn.move][turn.direction].forEach((turn) => this.turn(turn));
     } else if (Turn.isRotationTurn(turn)) {
       this.orientation.rotate(turn);
     }

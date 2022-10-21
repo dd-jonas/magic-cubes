@@ -128,12 +128,7 @@ describe.concurrent('Parser', () => {
           multiplicand: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                turn('R', CW),
-                turn('U', CW),
-                turn('R', CCW),
-                turn('U', CCW),
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)],
             },
           ],
           multiplier: 6,
@@ -245,12 +240,7 @@ describe.concurrent('Parser', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('D', CCW),
-                    turn('R', CW),
-                    turn('D', CW),
-                    turn('R', CCW),
-                  ],
+                  turns: [turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)],
                 },
               ],
               B: [
@@ -298,12 +288,7 @@ describe.concurrent('Parser', () => {
               multiplicand: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('U', CW),
-                    turn('M', CCW),
-                    turn('U', CW),
-                    turn('M', CW),
-                  ],
+                  turns: [turn('U', CW), turn('M', CCW), turn('U', CW), turn('M', CW)],
                 },
               ],
               multiplier: 2,
@@ -393,9 +378,6 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.ParenthesisClose, value: ')' },
     ];
 
-    assert.throws(
-      () => parse(tokens),
-      /repeating group must be followed by a multiplier/i
-    );
+    assert.throws(() => parse(tokens), /repeating group must be followed by a multiplier/i);
   });
 });

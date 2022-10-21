@@ -8,6 +8,7 @@ const { CW, CCW, Double } = Direction;
 
 describe.concurrent('Cleaner visitor', () => {
   it('does nothing when the input is already clean', () => {
+    // [l': [U, R' D2 R]] (R U R' U')2
     const ast: AST = {
       type: NodeTypes.Algorithm,
       body: [
@@ -42,12 +43,7 @@ describe.concurrent('Cleaner visitor', () => {
           multiplicand: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                turn('R', CW),
-                turn('U', CW),
-                turn('R', CCW),
-                turn('U', CCW),
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)],
             },
           ],
           multiplier: 2,
@@ -106,13 +102,7 @@ describe.concurrent('Cleaner visitor', () => {
       body: [
         {
           type: NodeTypes.Sequence,
-          turns: [
-            turn('M', CW),
-            turn('z', CW),
-            turn('y', CW),
-            turn('x', CW),
-            turn('S', CCW),
-          ],
+          turns: [turn('M', CW), turn('z', CW), turn('y', CW), turn('x', CW), turn('S', CCW)],
         },
       ],
     };
@@ -124,12 +114,7 @@ describe.concurrent('Cleaner visitor', () => {
       body: [
         {
           type: NodeTypes.Sequence,
-          turns: [
-            turn('M', Double),
-            turn('z', CW),
-            turn('y', CW),
-            turn('x', CW),
-          ],
+          turns: [turn('M', Double), turn('z', CW), turn('y', CW), turn('x', CW)],
         },
       ],
     });
@@ -236,13 +221,7 @@ describe.concurrent('Cleaner visitor', () => {
       body: [
         {
           type: NodeTypes.Sequence,
-          turns: [
-            turn('R', CW),
-            turn('U', Double),
-            turn('U', CW),
-            turn('U', CW),
-            turn('R', CCW),
-          ],
+          turns: [turn('R', CW), turn('U', Double), turn('U', CW), turn('U', CW), turn('R', CCW)],
         },
       ],
     };
@@ -336,7 +315,7 @@ describe.concurrent('Cleaner visitor', () => {
   });
 
   it('flattens repeating groups to a sequence when multiplying a single turn', () => {
-    // (R')6 -> R'
+    // (R')6 -> R2
     const ast: AST = {
       type: NodeTypes.Algorithm,
       body: [

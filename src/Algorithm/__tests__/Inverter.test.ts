@@ -148,12 +148,7 @@ describe.concurrent('Inverter', () => {
           multiplicand: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                turn('R', CW),
-                turn('U', CW),
-                turn('R', CCW),
-                turn('U', CCW),
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)],
             },
           ],
           multiplier: 6,
@@ -169,12 +164,7 @@ describe.concurrent('Inverter', () => {
           multiplicand: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                turn('U', CW),
-                turn('R', CW),
-                turn('U', CCW),
-                turn('R', CCW),
-              ],
+              turns: [turn('U', CW), turn('R', CW), turn('U', CCW), turn('R', CCW)],
             },
           ],
           multiplier: 6,
@@ -282,12 +272,7 @@ describe.concurrent('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('D', CCW),
-                    turn('R', CW),
-                    turn('D', CW),
-                    turn('R', CCW),
-                  ],
+                  turns: [turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)],
                 },
               ],
               B: [
@@ -319,12 +304,7 @@ describe.concurrent('Inverter', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('D', CCW),
-                    turn('R', CW),
-                    turn('D', CW),
-                    turn('R', CCW),
-                  ],
+                  turns: [turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)],
                 },
               ],
               B: [
@@ -373,12 +353,7 @@ describe.concurrent('Inverter', () => {
               multiplicand: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('U', CW),
-                    turn('M', CCW),
-                    turn('U', CW),
-                    turn('M', CW),
-                  ],
+                  turns: [turn('U', CW), turn('M', CCW), turn('U', CW), turn('M', CW)],
                 },
               ],
               multiplier: 2,
@@ -405,12 +380,7 @@ describe.concurrent('Inverter', () => {
               multiplicand: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('M', CCW),
-                    turn('U', CCW),
-                    turn('M', CW),
-                    turn('U', CCW),
-                  ],
+                  turns: [turn('M', CCW), turn('U', CCW), turn('M', CW), turn('U', CCW)],
                 },
               ],
               multiplier: 2,

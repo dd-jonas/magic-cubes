@@ -94,12 +94,7 @@ describe.concurrent('Generator', () => {
           multiplicand: [
             {
               type: NodeTypes.Sequence,
-              turns: [
-                turn('R', CW),
-                turn('U', CW),
-                turn('R', CCW),
-                turn('U', CCW),
-              ],
+              turns: [turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)],
             },
           ],
           multiplier: 6,
@@ -179,12 +174,7 @@ describe.concurrent('Generator', () => {
               A: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('D', CCW),
-                    turn('R', CW),
-                    turn('D', CW),
-                    turn('R', CCW),
-                  ],
+                  turns: [turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)],
                 },
               ],
               B: [
@@ -220,12 +210,7 @@ describe.concurrent('Generator', () => {
               multiplicand: [
                 {
                   type: NodeTypes.Sequence,
-                  turns: [
-                    turn('U', CW),
-                    turn('M', CCW),
-                    turn('U', CW),
-                    turn('M', CW),
-                  ],
+                  turns: [turn('U', CW), turn('M', CCW), turn('U', CW), turn('M', CW)],
                 },
               ],
               multiplier: 2,

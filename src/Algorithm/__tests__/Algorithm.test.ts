@@ -17,8 +17,7 @@ describe.concurrent('Algorithm constructor', () => {
   });
 
   it('throws when exceeding the max input length', () => {
-    const longAlg =
-      'R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U ';
+    const longAlg = 'R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U R U ';
 
     assert.throws(() => new Algorithm(longAlg));
   });

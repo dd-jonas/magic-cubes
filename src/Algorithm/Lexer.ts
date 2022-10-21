@@ -110,9 +110,7 @@ class Lexer {
 
     if (!this.isFinished) {
       throw new Error(
-        `Invalid character '${this.input[this.cursor]}' at position ${
-          this.cursor + 1
-        }.`
+        `Invalid character '${this.input[this.cursor]}' at position ${this.cursor + 1}.`
       );
     }
   }
