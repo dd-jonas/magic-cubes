@@ -1,18 +1,20 @@
-import { FaceMove, WideMove } from '../Algorithm/Parser';
 import {
+  createTurn,
+  FaceMove,
   FaceTurnNode,
   RotationTurnNode,
   SliceTurnNode,
-  Turn,
+  WideMove,
   WideTurnNode,
-} from '../Algorithm/Turn';
+} from '../Algorithm/Nodes';
+import { Turn } from '../Algorithm/Turn';
 
 /**
  * Track the orientation of the cube
  */
 
 export class Orientation {
-  private map: Record<FaceMove, FaceMove> = {
+  private orientation: Record<FaceMove, FaceMove> = {
     U: 'U',
     F: 'F',
     R: 'R',
@@ -25,7 +27,7 @@ export class Orientation {
    * Check if the orientation is in the initial orientation
    */
   get isOriented() {
-    return Object.entries(this.map).every(([pos, face]) => pos === face);
+    return Object.entries(this.orientation).every(([position, face]) => position === face);
   }
 
   /**
@@ -39,11 +41,11 @@ export class Orientation {
     } as const;
 
     const cycle = rotationCycles[rotation.move];
-    const oldMap = { ...this.map };
+    const oldOrientation = { ...this.orientation };
 
     cycle.forEach((face, i) => {
       const previousLocation = cycle[(i + rotation.direction) % cycle.length];
-      this.map[face] = oldMap[previousLocation];
+      this.orientation[face] = oldOrientation[previousLocation];
     });
   }
 
@@ -52,7 +54,7 @@ export class Orientation {
    */
   reset() {
     (['U', 'F', 'R', 'D', 'B', 'L'] as const).forEach((face) => {
-      this.map[face] = face;
+      this.orientation[face] = face;
     });
   }
 
@@ -61,7 +63,7 @@ export class Orientation {
    * e.g. After a x rotation, U will evaluate to F.
    */
   getFace(move: FaceMove) {
-    return this.map[move];
+    return this.orientation[move];
   }
 
   /**
@@ -70,25 +72,25 @@ export class Orientation {
    */
   getTurn<T extends FaceTurnNode | WideTurnNode | SliceTurnNode>(turn: T): T {
     if (Turn.isFaceTurn(turn)) {
-      return { ...turn, move: this.getFace(turn.move) };
+      return createTurn(this.getFace(turn.move), turn.direction);
     } else if (Turn.isWideTurn(turn)) {
       const face = turn.move.toUpperCase() as FaceMove;
-      return {
-        ...turn,
-        move: this.getFace(face).toLowerCase() as WideMove,
-      };
+      return createTurn(this.getFace(face).toLowerCase() as WideMove, turn.direction);
     } else if (Turn.isSliceTurn(turn)) {
       const sliceLikeFace = { M: 'L', E: 'D', S: 'F' } as const;
       const faceLikeSlice = { L: 'M', D: 'E', F: 'S' } as const;
       const oppositeFace = { R: 'L', U: 'D', B: 'F' } as const;
 
+      // Slice turns MES follow the direction of face turns LDF
       const isLDF = (move: FaceMove): move is 'L' | 'D' | 'F' =>
         Object.keys(faceLikeSlice).includes(move);
 
       const face = this.getFace(sliceLikeFace[turn.move]);
       const move = faceLikeSlice[isLDF(face) ? face : oppositeFace[face]];
 
-      return isLDF(face) ? { ...turn, move } : Turn.invert({ ...turn, move });
+      return isLDF(face)
+        ? createTurn(move, turn.direction)
+        : Turn.invert(createTurn(move, turn.direction));
     } else {
       return turn;
     }

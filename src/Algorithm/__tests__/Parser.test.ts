@@ -1,8 +1,16 @@
 import { assert, describe, it } from 'vitest';
 
 import { TokenTypes } from '../Lexer';
-import { Direction, NodeTypes, parse } from '../Parser';
-import { turn } from '../Turn';
+import {
+  createAlgorithm as alg,
+  createCommutator as comm,
+  createConjugate as conj,
+  createRepeating as rep,
+  createSequence as seq,
+  createTurn as turn,
+  Direction,
+} from '../Nodes';
+import { parse } from '../Parser';
 
 const { CW, CCW, Double } = Direction;
 
@@ -10,7 +18,7 @@ describe.concurrent('Parser', () => {
   it('parses an empty token list', () => {
     const ast = parse([]);
 
-    assert.deepEqual(ast, { type: NodeTypes.Algorithm, body: [] });
+    assert.deepEqual(ast, alg());
   });
 
   it('parses a sequence', () => {
@@ -24,23 +32,20 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.Turn, value: "R'" },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: [
-            turn('R', CW),
-            turn('U', CW),
-            turn('R', CCW),
-            turn('U', CW),
-            turn('R', CW),
-            turn('U', Double),
-            turn('R', CCW),
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(
+        seq([
+          turn('R', CW),
+          turn('U', CW),
+          turn('R', CCW),
+          turn('U', CW),
+          turn('R', CW),
+          turn('U', Double),
+          turn('R', CCW),
+        ])
+      )
+    );
   });
 
   it('parses a conjugate', () => {
@@ -54,26 +59,10 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Conjugate,
-          A: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('D', Double)],
-            },
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(conj(seq([turn('R', CW), turn('U', CW), turn('R', CCW)]), seq(turn('D', Double))))
+    );
   });
 
   it('parses a commutator', () => {
@@ -87,26 +76,10 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Commutator,
-          A: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('R', CW), turn('U', CW), turn('R', CCW)],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('D', Double)],
-            },
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(comm(seq([turn('R', CW), turn('U', CW), turn('R', CCW)]), seq(turn('D', Double))))
+    );
   });
 
   it('parses a repeating group', () => {
@@ -120,21 +93,10 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.Multiplier, value: '6' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Repeating,
-          multiplicand: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)],
-            },
-          ],
-          multiplier: 6,
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(rep(seq([turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)]), 6))
+    );
   });
 
   it('parses complex algorithm (conjugate with nested commutator)', () => {
@@ -152,37 +114,15 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Conjugate,
-          A: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('z', CCW)],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Commutator,
-              A: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('R', CW), turn('U', CCW), turn('R', CCW)],
-                },
-              ],
-              B: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('D', CCW)],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(
+        conj(
+          seq(turn('z', CCW)),
+          comm(seq([turn('R', CW), turn('U', CCW), turn('R', CCW)]), seq(turn('D', CCW)))
+        )
+      )
+    );
   });
 
   it('parses a complex algorithm (multiple conjugates)', () => {
@@ -208,52 +148,18 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Conjugate,
-          A: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('U', CCW)],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Conjugate,
-              A: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('R', CW), turn('D', CCW), turn('R', CCW)],
-                },
-              ],
-              B: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('U', CW)],
-                },
-              ],
-            },
-            {
-              type: NodeTypes.Conjugate,
-              A: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)],
-                },
-              ],
-              B: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('U', CCW)],
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(
+        conj(seq(turn('U', CCW)), [
+          conj(seq([turn('R', CW), turn('D', CCW), turn('R', CCW)]), seq(turn('U', CW))),
+          conj(
+            seq([turn('D', CCW), turn('R', CW), turn('D', CW), turn('R', CCW)]),
+            seq(turn('U', CCW))
+          ),
+        ])
+      )
+    );
   });
 
   it('parses a complex algorithm (nested repeating group)', () => {
@@ -271,32 +177,15 @@ describe.concurrent('Parser', () => {
       { type: TokenTypes.BracketClose, value: ']' },
     ]);
 
-    assert.deepEqual(ast, {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Conjugate,
-          A: [
-            {
-              type: NodeTypes.Sequence,
-              turns: [turn('M', CCW)],
-            },
-          ],
-          B: [
-            {
-              type: NodeTypes.Repeating,
-              multiplicand: [
-                {
-                  type: NodeTypes.Sequence,
-                  turns: [turn('U', CW), turn('M', CCW), turn('U', CW), turn('M', CW)],
-                },
-              ],
-              multiplier: 2,
-            },
-          ],
-        },
-      ],
-    });
+    assert.deepEqual(
+      ast,
+      alg(
+        conj(
+          seq(turn('M', CCW)),
+          rep(seq([turn('U', CW), turn('M', CCW), turn('U', CW), turn('M', CW)]), 2)
+        )
+      )
+    );
   });
 
   it('throws when encountering unbalanced brackets', () => {

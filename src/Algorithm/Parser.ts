@@ -1,73 +1,27 @@
 import { Token, TokenTypes } from './Lexer';
-import { FaceTurnNode, RotationTurnNode, SliceTurnNode, WideTurnNode } from './Turn';
-
-export type FaceMove = 'U' | 'F' | 'R' | 'D' | 'B' | 'L';
-export type WideMove = 'u' | 'f' | 'r' | 'd' | 'b' | 'l';
-export type SliceMove = 'M' | 'E' | 'S';
-export type RotationMove = 'x' | 'y' | 'z';
-export type Move = FaceMove | WideMove | SliceMove | RotationMove;
-
-export enum Direction {
-  CW = 1,
-  Double = 2,
-  CCW = 3,
-}
-
-export enum NodeTypes {
-  Turn = 'turn',
-  Sequence = 'sequence',
-  Conjugate = 'conjugate',
-  Commutator = 'commutator',
-  Repeating = 'repeating group',
-  Algorithm = 'algorithm',
-}
-
-export type TurnNode = FaceTurnNode | WideTurnNode | SliceTurnNode | RotationTurnNode;
-
-export type SequenceNode = {
-  type: NodeTypes.Sequence;
-  turns: Array<TurnNode>;
-};
-
-export type ConjugateNode = {
-  type: NodeTypes.Conjugate;
-  A: Array<Node>;
-  B: Array<Node>;
-};
-
-export type CommutatorNode = {
-  type: NodeTypes.Commutator;
-  A: Array<Node>;
-  B: Array<Node>;
-};
-
-export type RepeatingNode = {
-  type: NodeTypes.Repeating;
-  multiplicand: Array<Node>;
-  multiplier: number;
-};
-
-export type AlgorithmNode = {
-  type: NodeTypes.Algorithm;
-  body: Array<Node>;
-};
-
-export type Node =
-  | TurnNode
-  | SequenceNode
-  | ConjugateNode
-  | CommutatorNode
-  | RepeatingNode
-  | AlgorithmNode;
+import {
+  AST,
+  CommutatorNode,
+  ConjugateNode,
+  createAlgorithm,
+  createCommutator,
+  createConjugate,
+  createRepeating,
+  createSequence,
+  createTurn,
+  Direction,
+  Move,
+  NodeTypes,
+} from './Nodes';
 
 export type ParseError = { index: number; message?: string };
-export type AST = AlgorithmNode;
 
 class Parser {
   private index = 0;
   private tokens: Token[];
   private errors: ParseError[] = [];
-  ast: AST = { type: NodeTypes.Algorithm, body: [] };
+
+  ast: AST = createAlgorithm();
 
   constructor(tokens: Token[]) {
     this.tokens = tokens;
@@ -136,7 +90,7 @@ class Parser {
       return;
     }
 
-    const node: SequenceNode = { type: NodeTypes.Sequence, turns: [] };
+    const node = createSequence();
 
     let token = this.currentToken();
     while (token && token.type === TokenTypes.Turn) {
@@ -151,7 +105,7 @@ class Parser {
           ? Direction.CCW
           : Direction.Double;
 
-      const turnNode: TurnNode = { type: NodeTypes.Turn, move, direction };
+      const turnNode = createTurn(move, direction);
 
       node.turns.push(turnNode);
       token = this.nextToken();
@@ -163,10 +117,7 @@ class Parser {
   /**
    * Shared logic for the conjugate and commutator parser
    */
-  private parseConjugateOrCommutator(
-    type: NodeTypes.Conjugate | NodeTypes.Commutator,
-    node: ConjugateNode | CommutatorNode
-  ) {
+  private parseConjugateOrCommutator(node: ConjugateNode | CommutatorNode) {
     if (this.currentToken()?.type !== TokenTypes.BracketOpen) {
       this.createError();
       return;
@@ -186,7 +137,9 @@ class Parser {
     }
 
     const seperator =
-      type === NodeTypes.Conjugate ? TokenTypes.SeperatorConjugate : TokenTypes.SeperatorCommutator;
+      node.type === NodeTypes.Conjugate
+        ? TokenTypes.SeperatorConjugate
+        : TokenTypes.SeperatorCommutator;
 
     if (
       !token ||
@@ -198,7 +151,7 @@ class Parser {
         token?.type === TokenTypes.BracketClose
           ? 'Missing seperator : or , inside brackets.'
           : node.A.length === 0
-          ? `Left side of ${type} can't be empty.`
+          ? `Left side of ${node.type} can't be empty.`
           : undefined;
       this.createError(errorMessage);
       this.restoreCheckpoint(checkpoint);
@@ -213,7 +166,7 @@ class Parser {
 
     if (!token || node.B.length === 0) {
       const errorMessage =
-        node.B.length === 0 ? `Right side of ${type} can't be empty.` : undefined;
+        node.B.length === 0 ? `Right side of ${node.type} can't be empty.` : undefined;
       this.createError(errorMessage);
       this.restoreCheckpoint(checkpoint);
       return;
@@ -229,8 +182,8 @@ class Parser {
    * where A and B are recursively parsed
    */
   private parseConjugate() {
-    const node: ConjugateNode = { type: NodeTypes.Conjugate, A: [], B: [] };
-    return this.parseConjugateOrCommutator(NodeTypes.Conjugate, node);
+    const node = createConjugate();
+    return this.parseConjugateOrCommutator(node);
   }
 
   /**
@@ -238,8 +191,8 @@ class Parser {
    * where A and B are recursively parsed
    */
   private parseCommutator() {
-    const node: CommutatorNode = { type: NodeTypes.Commutator, A: [], B: [] };
-    return this.parseConjugateOrCommutator(NodeTypes.Commutator, node);
+    const node = createCommutator();
+    return this.parseConjugateOrCommutator(node);
   }
 
   /**
@@ -254,11 +207,7 @@ class Parser {
 
     const checkpoint = this.createCheckpoint();
 
-    const node: RepeatingNode = {
-      type: NodeTypes.Repeating,
-      multiplicand: [],
-      multiplier: 0,
-    };
+    const node = createRepeating();
 
     let token = this.nextToken();
     while (token && token.type !== TokenTypes.ParenthesisClose) {

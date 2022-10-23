@@ -1,7 +1,5 @@
-// prettier-ignore
 export type CornerName = 'UBL' | 'UBR' | 'UFR' | 'UFL' | 'DFL' | 'DFR' | 'DBR' | 'DBL';
-// prettier-ignore
-export type EdgeName = 'UB' | 'UR' | 'UF' | 'UL' | 'FL' | 'FR' | 'BR' | 'BL' | 'DF' | 'DR' | 'DB' | 'DL';
+export type EdgeName = 'UB' | 'UR' | 'UF' | 'UL' | 'FL' | 'FR' | 'BR' | 'BL' | 'DF' | 'DR' | 'DB' | 'DL'; // prettier-ignore
 export type PieceName = CornerName | EdgeName;
 
 export type CornerTwist = 0 | 1 | 2;

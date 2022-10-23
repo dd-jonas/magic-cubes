@@ -19,7 +19,7 @@ describe.concurrent('CubeModel', () => {
     const model = new CubeModel(cube, colorScheme);
 
     // prettier-ignore
-    assert.deepEqual(model.colors(),{
+    assert.deepEqual(model.colors(), {
       U: ['white', 'white', 'white', 'white', 'white', 'white', 'white', 'white', 'white'],
       D: ['yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow', 'yellow'],
       F: ['green', 'green', 'green', 'green', 'green', 'green', 'green', 'green', 'green'],
@@ -35,7 +35,7 @@ describe.concurrent('CubeModel', () => {
     const model = new CubeModel(cube, colorScheme);
 
     // prettier-ignore
-    assert.deepEqual(model.colors(),{
+    assert.deepEqual(model.colors(), {
       U: ['orange', 'yellow', 'orange', 'red', 'white', 'green', 'red', 'yellow', 'red'],
       D: ['orange', 'green', 'red', 'orange', 'yellow', 'blue', 'yellow', 'green', 'yellow'],
       F: ['white', 'blue', 'white', 'blue', 'green', 'green', 'green', 'yellow', 'yellow'],

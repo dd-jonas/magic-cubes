@@ -20,7 +20,7 @@
   "sideEffects": false,
   "scripts": {
     "build": "rimraf lib && tsc -p tsconfig.json && tsc -p tsconfig-cjs.json",
-    "tsc": "tsc -p tsconfig.json --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "format": "prettier src --write",
     "lint": "eslint src --ext .ts --fix",
     "test": "vitest --ui",

@@ -1,4 +1,4 @@
-import { NodeTypes } from '../Parser';
+import { NodeTypes } from '../Nodes';
 import { Visitor } from './Visitor';
 
 export const validator: Visitor = {
@@ -11,6 +11,7 @@ export const validator: Visitor = {
   [NodeTypes.Commutator]: (node) => node,
 
   [NodeTypes.Repeating]: (node) => {
+    // Prevent bypassing a possible max algorithm length by using ridiculously large multipliers
     if (node.multiplier > 6) {
       throw new Error("Multiplier can't be higher than 6.");
     }

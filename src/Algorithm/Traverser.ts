@@ -1,15 +1,16 @@
 import structuredClone from '@ungap/structured-clone';
 
-import { AST, Node, NodeTypes } from './Parser';
+import { AST, Node, NodeTypes } from './Nodes';
 import { cleaner, rotationlessSequencer, sequencer, validator, Visitor } from './visitors';
 
 class Traverser {
   private visitor: Visitor;
+
   ast: AST;
 
   constructor(ast: AST, visitor: Visitor) {
-    this.ast = structuredClone(ast);
     this.visitor = visitor;
+    this.ast = structuredClone(ast);
   }
 
   private traverseNode(node: Node) {

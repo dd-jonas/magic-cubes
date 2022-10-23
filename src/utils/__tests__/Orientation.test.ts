@@ -1,35 +1,29 @@
 import { assert, describe, it } from 'vitest';
 
 import {
+  createTurn,
   Direction,
   FaceMove,
-  NodeTypes,
+  FaceTurnNode,
   RotationMove,
+  RotationTurnNode,
   SliceMove,
+  SliceTurnNode,
   WideMove,
-} from '../../Algorithm/Parser';
-import { FaceTurnNode, RotationTurnNode, SliceTurnNode, WideTurnNode } from '../../Algorithm/Turn';
+  WideTurnNode,
+} from '../../Algorithm/Nodes';
 import { Orientation } from '../Orientation';
 
+const { CW, CCW, Double } = Direction;
+const [x, y, z] = ['x', 'y', 'z'] as const;
+
+const rotation = (move: RotationMove, direction: Direction) =>
+  createTurn<RotationTurnNode>(move, direction);
+
+const turn = (move: FaceMove | WideMove | SliceMove, direction: Direction) =>
+  createTurn<FaceTurnNode | WideTurnNode | SliceTurnNode>(move, direction);
+
 describe('Orientation', () => {
-  const [x, y, z] = ['x', 'y', 'z'] as const;
-  const { CW, CCW, Double } = Direction;
-
-  const rotation = (move: RotationMove, direction: Direction): RotationTurnNode => ({
-    type: NodeTypes.Turn,
-    move,
-    direction,
-  });
-
-  const turn = (
-    move: FaceMove | WideMove | SliceMove,
-    direction: Direction
-  ): FaceTurnNode | WideTurnNode | SliceTurnNode => ({
-    type: NodeTypes.Turn,
-    move,
-    direction,
-  });
-
   it('tracks rotations correctly', () => {
     const rotations: RotationTurnNode[] = [
       rotation(x, CW),
@@ -70,8 +64,11 @@ describe('Orientation', () => {
     const orientation = new Orientation();
     rotations.forEach((rotation) => orientation.rotate(rotation));
 
+    assert.isFalse(orientation.isOriented);
+
     orientation.reset();
 
+    assert.isTrue(orientation.isOriented);
     assert.equal(orientation.getFace('U'), 'U');
     assert.equal(orientation.getFace('F'), 'F');
     assert.equal(orientation.getFace('R'), 'R');

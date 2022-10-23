@@ -7,7 +7,7 @@ import {
   RepeatingNode,
   SequenceNode,
   TurnNode,
-} from '../Parser';
+} from '../Nodes';
 
 type VisitorFn<T extends Node> = (node: T) => Node | Node[] | null;
 

@@ -1,21 +1,19 @@
 import { Algorithm } from '../Algorithm/Algorithm';
-import { Direction, FaceMove, TurnNode } from '../Algorithm/Parser';
+import { Direction, FaceMove, TurnNode } from '../Algorithm/Nodes';
 import { Turn } from '../Algorithm/Turn';
 import { Orientation } from '../utils/Orientation';
 import { CornerName, CornerPiece, EdgeName, EdgePiece } from './Piece';
 
-// prettier-ignore
 export type Corners = [
   CornerPiece, CornerPiece, CornerPiece, CornerPiece,
   CornerPiece, CornerPiece, CornerPiece, CornerPiece
-];
+]; // prettier-ignore
 
-// prettier-ignore
 export type Edges = [
   EdgePiece, EdgePiece, EdgePiece, EdgePiece,
   EdgePiece, EdgePiece, EdgePiece, EdgePiece,
   EdgePiece, EdgePiece, EdgePiece, EdgePiece
-];
+]; // prettier-ignore
 
 export class Cube {
   readonly corners: Corners = [
@@ -46,18 +44,16 @@ export class Cube {
 
   readonly orientation: Orientation;
 
-  // prettier-ignore
   static readonly solvedCorners: Readonly<CornerName[]> = [
     'UBL', 'UBR', 'UFR', 'UFL',
     'DFL', 'DFR', 'DBR', 'DBL',
-  ];
+  ]; // prettier-ignore
 
-  // prettier-ignore
   static readonly solvedEdges: Readonly<EdgeName[]> = [
     'UB', 'UR', 'UF', 'UL',
     'FL', 'FR', 'BR', 'BL',
     'DF', 'DR', 'DB', 'DL',
-  ];
+  ]; // prettier-ignore
 
   static readonly pieceLocations: Record<FaceMove, Record<'corners' | 'edges', number[]>> = {
     U: { corners: [0, 1, 2, 3], edges: [0, 1, 2, 3] },
@@ -164,7 +160,7 @@ export class Cube {
       locations.corners.forEach((l, i) => (this.corners[l] = cycledCorners[i]));
       locations.edges.forEach((l, i) => (this.edges[l] = cycledEdges[i]));
     } else if (Turn.isWideTurn(turn) || Turn.isSliceTurn(turn)) {
-      Turn.wideAndSliceMap[turn.move][turn.direction].forEach((turn) => this.turn(turn));
+      Turn.mapWideAndSliceTurn(turn).forEach((turn) => this.turn(turn));
     } else if (Turn.isRotationTurn(turn)) {
       this.orientation.rotate(turn);
     }

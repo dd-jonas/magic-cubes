@@ -9,10 +9,11 @@ import {
   RepeatingNode,
   SequenceNode,
   TurnNode,
-} from './Parser';
+} from './Nodes';
 
 class Generator {
   private ast: AST;
+
   algorithm = '';
 
   constructor(ast: AST) {

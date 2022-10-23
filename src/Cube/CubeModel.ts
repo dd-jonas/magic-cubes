@@ -8,9 +8,10 @@ export class CubeModel<ColorScheme extends Record<Face, string> = Record<Face, s
   private readonly cube: Cube;
   private readonly colorScheme: ColorScheme;
 
-  // Location of all stickers on their respective faces
-  // e.g. DBL: [['D', 6], ...] means the D sticker of the DBL piece is the 6th sticker on the D face
-  // prettier-ignore
+  /**
+   * Location of all stickers on their respective faces
+   * e.g. DBL: [['D', 6], ...] means the D sticker of the DBL piece is the 6th sticker on the D face
+   */
   private static locationMap: Record<PieceName, [Face, number][]> = {
     UBL: [['U', 0], ['L', 0], ['B', 2]],
     UBR: [['U', 2], ['B', 0], ['R', 2]],
@@ -32,7 +33,7 @@ export class CubeModel<ColorScheme extends Record<Face, string> = Record<Face, s
     DR: [['D', 5], ['R', 7]],
     DB: [['D', 7], ['B', 7]],
     DL: [['D', 3], ['L', 7]],
-  };
+  }; // prettier-ignore
 
   constructor(cube: Cube, colorScheme: ColorScheme) {
     this.cube = cube;

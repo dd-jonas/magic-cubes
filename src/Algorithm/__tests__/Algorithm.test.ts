@@ -1,7 +1,9 @@
 import { assert, describe, it } from 'vitest';
 
 import { Algorithm } from '../Algorithm';
-import { Direction, NodeTypes } from '../Parser';
+import { createTurn as turn, Direction } from '../Nodes';
+
+const { CW, CCW, Double } = Direction;
 
 describe.concurrent('Algorithm constructor', () => {
   it('handles empty input', () => {
@@ -22,7 +24,7 @@ describe.concurrent('Algorithm constructor', () => {
     assert.throws(() => new Algorithm(longAlg));
   });
 
-  it('cleans the input', () => {
+  it('normalizes the input', () => {
     const input = ' (Rw U)*2 (R2’ U’) ';
 
     const alg = new Algorithm(input);
@@ -66,14 +68,14 @@ describe.concurrent('Algorithm constructor', () => {
     const alg = new Algorithm(input);
 
     assert.deepEqual(alg.turns, [
-      { type: NodeTypes.Turn, move: 'r', direction: Direction.CW },
-      { type: NodeTypes.Turn, move: 'U', direction: Direction.CW },
-      { type: NodeTypes.Turn, move: 'r', direction: Direction.CCW },
-      { type: NodeTypes.Turn, move: 'D', direction: Direction.Double },
-      { type: NodeTypes.Turn, move: 'r', direction: Direction.CW },
-      { type: NodeTypes.Turn, move: 'U', direction: Direction.CCW },
-      { type: NodeTypes.Turn, move: 'r', direction: Direction.CCW },
-      { type: NodeTypes.Turn, move: 'D', direction: Direction.Double },
+      turn('r', CW),
+      turn('U', CW),
+      turn('r', CCW),
+      turn('D', Double),
+      turn('r', CW),
+      turn('U', CCW),
+      turn('r', CCW),
+      turn('D', Double),
     ]);
   });
 });

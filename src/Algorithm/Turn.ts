@@ -1,140 +1,63 @@
 import {
+  createTurn,
   Direction,
-  FaceMove,
+  FaceTurnNode,
   Move,
-  NodeTypes,
-  RotationMove,
+  RotationTurnNode,
   SliceMove,
+  SliceTurnNode,
   TurnNode,
   WideMove,
-} from './Parser';
-
-export type FaceTurnNode = {
-  type: NodeTypes.Turn;
-  move: FaceMove;
-  direction: Direction;
-};
-
-export type WideTurnNode = {
-  type: NodeTypes.Turn;
-  move: WideMove;
-  direction: Direction;
-};
-
-export type SliceTurnNode = {
-  type: NodeTypes.Turn;
-  move: SliceMove;
-  direction: Direction;
-};
-
-export type RotationTurnNode = {
-  type: NodeTypes.Turn;
-  move: RotationMove;
-  direction: Direction;
-};
-
-export const turn = (move: Move, direction: Direction): TurnNode => ({
-  type: NodeTypes.Turn,
-  move,
-  direction,
-});
+  WideTurnNode,
+} from './Nodes';
 
 const { CW, CCW, Double } = Direction;
+const t = createTurn;
 
 export class Turn {
   /**
    * Map wide and slice turns to outer turns and a rotation.
    */
-  static wideAndSliceMap: Record<WideMove | SliceMove, Record<Direction, TurnNode[]>> = {
-    u: {
-      [CW]: [turn('D', CW), turn('y', CW)],
-      [CCW]: [turn('D', CCW), turn('y', CCW)],
-      [Double]: [turn('D', Double), turn('y', Double)],
-    },
-    f: {
-      [CW]: [turn('B', CW), turn('z', CW)],
-      [CCW]: [turn('B', CCW), turn('z', CCW)],
-      [Double]: [turn('B', Double), turn('z', Double)],
-    },
-    r: {
-      [CW]: [turn('L', CW), turn('x', CW)],
-      [CCW]: [turn('L', CCW), turn('x', CCW)],
-      [Double]: [turn('L', Double), turn('x', Double)],
-    },
-    d: {
-      [CW]: [turn('U', CW), turn('y', CCW)],
-      [CCW]: [turn('U', CCW), turn('y', CW)],
-      [Double]: [turn('U', Double), turn('y', Double)],
-    },
-    b: {
-      [CW]: [turn('F', CW), turn('z', CCW)],
-      [CCW]: [turn('F', CCW), turn('z', CW)],
-      [Double]: [turn('F', Double), turn('z', Double)],
-    },
-    l: {
-      [CW]: [turn('R', CW), turn('x', CCW)],
-      [CCW]: [turn('R', CCW), turn('x', CW)],
-      [Double]: [turn('R', Double), turn('x', Double)],
-    },
-    M: {
-      [CW]: [turn('R', CW), turn('L', CCW), turn('x', CCW)],
-      [CCW]: [turn('R', CCW), turn('L', CW), turn('x', CW)],
-      [Double]: [turn('R', Double), turn('L', Double), turn('x', Double)],
-    },
-    E: {
-      [CW]: [turn('U', CW), turn('D', CCW), turn('y', CCW)],
-      [CCW]: [turn('U', CCW), turn('D', CW), turn('y', CW)],
-      [Double]: [turn('U', Double), turn('D', Double), turn('y', Double)],
-    },
-    S: {
-      [CW]: [turn('F', CCW), turn('B', CW), turn('z', CW)],
-      [CCW]: [turn('F', CW), turn('B', CCW), turn('z', CCW)],
-      [Double]: [turn('F', Double), turn('B', Double), turn('z', Double)],
-    },
-  };
+  private static wideAndSliceMap: Record<WideMove | SliceMove, Record<Direction, TurnNode[]>> = {
+    u: { [CW]: [t('D', CW), t('y', CW)],  [CCW]: [t('D', CCW), t('y', CCW)], [Double]: [t('D', Double), t('y', Double)], },
+    f: { [CW]: [t('B', CW), t('z', CW)],  [CCW]: [t('B', CCW), t('z', CCW)], [Double]: [t('B', Double), t('z', Double)], },
+    r: { [CW]: [t('L', CW), t('x', CW)],  [CCW]: [t('L', CCW), t('x', CCW)], [Double]: [t('L', Double), t('x', Double)], },
+    d: { [CW]: [t('U', CW), t('y', CCW)], [CCW]: [t('U', CCW), t('y', CW)],  [Double]: [t('U', Double), t('y', Double)], },
+    b: { [CW]: [t('F', CW), t('z', CCW)], [CCW]: [t('F', CCW), t('z', CW)],  [Double]: [t('F', Double), t('z', Double)], },
+    l: { [CW]: [t('R', CW), t('x', CCW)], [CCW]: [t('R', CCW), t('x', CW)],  [Double]: [t('R', Double), t('x', Double)], },
+    M: { [CW]: [t('R', CW), t('L', CCW), t('x', CCW)], [CCW]: [t('R', CCW), t('L', CW), t('x', CW)],  [Double]: [t('R', Double), t('L', Double), t('x', Double)], },
+    E: { [CW]: [t('U', CW), t('D', CCW), t('y', CCW)], [CCW]: [t('U', CCW), t('D', CW), t('y', CW)],  [Double]: [t('U', Double), t('D', Double), t('y', Double)], },
+    S: { [CW]: [t('F', CCW), t('B', CW), t('z', CW)],  [CCW]: [t('F', CW), t('B', CCW), t('z', CCW)], [Double]: [t('F', Double), t('B', Double), t('z', Double)], },
+  }; // prettier-ignore
 
-  static merge(turn1: TurnNode, turn2: TurnNode): TurnNode | TurnNode[] | null {
+  static merge<M extends Move>(
+    turn1: TurnNode & { move: M },
+    turn2: TurnNode & { move: M }
+  ): TurnNode | TurnNode[] | null {
     if (turn1.move !== turn2.move) {
       return [turn1, turn2];
     }
 
     const newDirection = (turn1.direction + turn2.direction) % 4;
 
-    return newDirection === 0
-      ? null
-      : { type: NodeTypes.Turn, move: turn1.move, direction: newDirection };
+    return newDirection === 0 ? null : createTurn(turn1.move, newDirection);
   }
 
   static repeat(turn: TurnNode, multiplier: number): TurnNode | null {
     const newDirection = (turn.direction * multiplier) % 4;
 
-    return newDirection === 0
-      ? null
-      : { type: NodeTypes.Turn, move: turn.move, direction: newDirection };
+    return newDirection === 0 ? null : createTurn(turn.move, newDirection);
   }
 
   static invert<T extends TurnNode>(turn: T): T {
-    return {
-      ...turn,
-      direction:
-        turn.direction === Direction.CW
-          ? Direction.CCW
-          : turn.direction === Direction.CCW
-          ? Direction.CW
-          : turn.direction,
-    };
-  }
+    const newDirection =
+      turn.direction === Direction.CW
+        ? Direction.CCW
+        : turn.direction === Direction.CCW
+        ? Direction.CW
+        : turn.direction;
 
-  static isParallel(turn1: TurnNode, turn2: TurnNode) {
-    const group1 = ['U', 'D', 'u', 'd', 'E'];
-    const group2 = ['F', 'B', 'f', 'b', 'S'];
-    const group3 = ['R', 'L', 'r', 'l', 'M'];
-
-    return (
-      (group1.includes(turn1.move) && group1.includes(turn2.move)) ||
-      (group2.includes(turn1.move) && group2.includes(turn2.move)) ||
-      (group3.includes(turn1.move) && group3.includes(turn2.move))
-    );
+    return createTurn(turn.move, newDirection);
   }
 
   static isFaceTurn = (turn: TurnNode): turn is FaceTurnNode => {
@@ -153,15 +76,7 @@ export class Turn {
     return ['x', 'y', 'z'].includes(turn.move);
   };
 
-  static isSameMove(turn1: TurnNode, turn2: TurnNode) {
-    return turn1.move === turn2.move;
-  }
-
-  static isSingleTurn(turn: TurnNode) {
-    return turn.direction === Direction.CW || turn.direction === Direction.CCW;
-  }
-
-  static isDoubleleTurn(turn: TurnNode) {
-    return turn.direction === Direction.Double;
+  static mapWideAndSliceTurn(turn: WideTurnNode | SliceTurnNode): TurnNode[] {
+    return Turn.wideAndSliceMap[turn.move][turn.direction];
   }
 }

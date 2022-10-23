@@ -1,4 +1,4 @@
-import { NodeTypes, TurnNode } from '../Parser';
+import { createSequence, NodeTypes, TurnNode } from '../Nodes';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
 
@@ -50,12 +50,7 @@ export const cleaner: Visitor = {
       const sequence = node.multiplicand[0];
       const newTurn = Turn.repeat(sequence.turns[0], node.multiplier);
 
-      return newTurn
-        ? {
-            type: NodeTypes.Sequence,
-            turns: [newTurn],
-          }
-        : null;
+      return newTurn ? createSequence([newTurn]) : null;
     }
 
     return node;

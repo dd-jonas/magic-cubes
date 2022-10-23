@@ -1,7 +1,8 @@
 import { generate } from './Generator';
 import { invert } from './Inverter';
 import { lex } from './Lexer';
-import { AST, parse, SequenceNode, TurnNode } from './Parser';
+import { AST, SequenceNode, TurnNode } from './Nodes';
+import { parse } from './Parser';
 import { clean, rotationless, sequence, validate } from './Traverser';
 
 export class Algorithm {

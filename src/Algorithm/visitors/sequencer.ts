@@ -1,12 +1,9 @@
-import { NodeTypes, SequenceNode, TurnNode } from '../Parser';
+import { createAlgorithm, createSequence, NodeTypes, SequenceNode, TurnNode } from '../Nodes';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
 
-const invertSequence = (node: SequenceNode): SequenceNode => {
-  return {
-    type: NodeTypes.Sequence,
-    turns: [...node.turns].reverse().map((turn) => Turn.invert(turn)),
-  };
+const invertSequence = (node: SequenceNode) => {
+  return createSequence([...node.turns].reverse().map((turn) => Turn.invert(turn)));
 };
 
 export const sequencer: Visitor = {
@@ -32,17 +29,10 @@ export const sequencer: Visitor = {
   },
 
   [NodeTypes.Algorithm]: (node) => {
-    return {
-      type: NodeTypes.Algorithm,
-      body: [
-        {
-          type: NodeTypes.Sequence,
-          turns: node.body.reduce(
-            (acc, node) => [...acc, ...(node as SequenceNode).turns],
-            <TurnNode[]>[]
-          ),
-        },
-      ],
-    };
+    return createAlgorithm([
+      createSequence(
+        node.body.reduce((acc, node) => [...acc, ...(node as SequenceNode).turns], <TurnNode[]>[])
+      ),
+    ]);
   },
 };

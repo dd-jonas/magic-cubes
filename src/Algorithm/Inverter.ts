@@ -1,4 +1,14 @@
-import { AST, Node, NodeTypes, TurnNode } from './Parser';
+import {
+  AST,
+  createAlgorithm,
+  createCommutator,
+  createConjugate,
+  createRepeating,
+  createSequence,
+  Node,
+  NodeTypes,
+  TurnNode,
+} from './Nodes';
 import { Turn } from './Turn';
 
 /**
@@ -17,33 +27,15 @@ class Inverter {
       case NodeTypes.Turn:
         return Turn.invert(node);
       case NodeTypes.Sequence:
-        return {
-          type: NodeTypes.Sequence,
-          turns: [...this.invertArray(node.turns)] as TurnNode[],
-        };
+        return createSequence([...this.invertArray(node.turns)] as TurnNode[]);
       case NodeTypes.Conjugate:
-        return {
-          type: NodeTypes.Conjugate,
-          A: node.A,
-          B: this.invertArray(node.B),
-        };
+        return createConjugate(node.A, this.invertArray(node.B));
       case NodeTypes.Commutator:
-        return {
-          type: NodeTypes.Commutator,
-          A: node.B,
-          B: node.A,
-        };
+        return createCommutator(node.B, node.A);
       case NodeTypes.Repeating:
-        return {
-          type: NodeTypes.Repeating,
-          multiplicand: this.invertArray(node.multiplicand),
-          multiplier: node.multiplier,
-        };
+        return createRepeating(this.invertArray(node.multiplicand), node.multiplier);
       case NodeTypes.Algorithm:
-        return {
-          type: NodeTypes.Algorithm,
-          body: this.invertArray(node.body),
-        };
+        return createAlgorithm(this.invertArray(node.body));
     }
   }
 

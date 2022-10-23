@@ -1,5 +1,5 @@
 import { Orientation } from '../../utils/Orientation';
-import { NodeTypes, TurnNode } from '../Parser';
+import { NodeTypes, TurnNode } from '../Nodes';
 import { Turn } from '../Turn';
 import { Visitor } from './Visitor';
 
@@ -12,9 +12,7 @@ export const rotationlessSequencer: Visitor = {
     node.turns = node.turns
       // Map wide turns and slice turns to face turns and rotations
       .flatMap((turn) =>
-        Turn.isWideTurn(turn) || Turn.isSliceTurn(turn)
-          ? Turn.wideAndSliceMap[turn.move][turn.direction]
-          : turn
+        Turn.isWideTurn(turn) || Turn.isSliceTurn(turn) ? Turn.mapWideAndSliceTurn(turn) : turn
       )
       // Map face turns and remove rotations
       .reduce((rotationless, turn) => {
