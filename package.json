@@ -26,8 +26,8 @@
     "test": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "test:ci": "vitest run",
-    "prepublishOnly": "yarn format && yarn lint && test:ci && yarn build",
-    "preversion": "yarn format && yarn lint && test:ci",
+    "prepublishOnly": "yarn format && yarn lint && yarn test:ci && yarn build",
+    "preversion": "yarn format && yarn lint && yarn test:ci",
     "version": "git add -A",
     "postversion": "git push && git push --tags"
   },
