@@ -10,7 +10,7 @@ import {
   Direction,
   NodeTypes,
 } from '../Nodes';
-import { clean, sequence, validate } from '../Traverser';
+import { clean, rotationless, sequence, validate } from '../Traverser';
 
 const { CW, CCW, Double } = Direction;
 
@@ -161,6 +161,42 @@ describe.concurrent('Sequencer visitor', () => {
           turn('R', CCW),
           turn('D', CW),
           turn('z', CW),
+        ])
+      )
+    );
+  });
+});
+
+describe.concurrent('Rotationless sequencer visitor', () => {
+  it('flattens a complex algorithm to a rotationless sequence', () => {
+    // R y F [z: [R x U R', d2]]
+    const ast = alg([
+      seq([turn('R', CW), turn('y', CW), turn('F', CW)]),
+      conj(
+        seq(turn('z', CW)),
+        comm(
+          seq([turn('R', CW), turn('x', CW), turn('U', CW), turn('R', CCW)]),
+          seq(turn('d', Double))
+        )
+      ),
+    ]);
+
+    const rotationlessSequence = rotationless(ast);
+
+    assert.deepEqual(
+      rotationlessSequence,
+      alg(
+        seq([
+          turn('R', CW),
+          turn('R', CW),
+          turn('U', CW),
+          turn('R', CW),
+          turn('U', CCW),
+          turn('R', Double),
+          turn('D', CW),
+          turn('R', CCW),
+          turn('D', CCW),
+          turn('B', Double),
         ])
       )
     );
