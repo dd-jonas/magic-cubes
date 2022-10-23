@@ -1,6 +1,5 @@
 import {
   AlgorithmNode,
-  AST,
   CommutatorNode,
   ConjugateNode,
   Direction,
@@ -12,11 +11,11 @@ import {
 } from './Nodes';
 
 class Generator {
-  private ast: AST;
+  private ast: AlgorithmNode;
 
   algorithm = '';
 
-  constructor(ast: AST) {
+  constructor(ast: AlgorithmNode) {
     this.ast = ast;
   }
 
@@ -86,7 +85,7 @@ class Generator {
   }
 }
 
-export const generate = (ast: AST) => {
+export const generate = (ast: AlgorithmNode) => {
   const generator = new Generator(ast);
   generator.run();
 

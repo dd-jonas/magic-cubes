@@ -1,6 +1,6 @@
 import { Token, TokenTypes } from './Lexer';
 import {
-  AST,
+  AlgorithmNode,
   CommutatorNode,
   ConjugateNode,
   createAlgorithm,
@@ -21,7 +21,7 @@ class Parser {
   private tokens: Token[];
   private errors: ParseError[] = [];
 
-  ast: AST = createAlgorithm();
+  ast: AlgorithmNode = createAlgorithm();
 
   constructor(tokens: Token[]) {
     this.tokens = tokens;
@@ -35,7 +35,7 @@ class Parser {
   }
 
   /**
-   * Get the token at the current index and increment the index
+   * Get the token at the next index
    */
   private nextToken(): Token | undefined {
     return this.tokens[++this.index];

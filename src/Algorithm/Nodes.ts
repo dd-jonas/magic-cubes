@@ -67,8 +67,6 @@ export type Node =
   | RepeatingNode
   | AlgorithmNode;
 
-export type AST = AlgorithmNode;
-
 // Helper functions for creating nodes
 
 export const createTurn = <T extends TurnNode>(move: T['move'], direction: T['direction']): T =>

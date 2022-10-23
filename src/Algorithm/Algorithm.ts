@@ -1,13 +1,13 @@
 import { generate } from './Generator';
 import { invert } from './Inverter';
 import { lex } from './Lexer';
-import { AST, SequenceNode, TurnNode } from './Nodes';
+import { AlgorithmNode, SequenceNode, TurnNode } from './Nodes';
 import { parse } from './Parser';
 import { clean, rotationless, sequence, validate } from './Traverser';
 
 export class Algorithm {
   readonly raw: string;
-  readonly ast: AST;
+  readonly ast: AlgorithmNode;
 
   constructor(alg: string) {
     if (typeof alg !== 'string') {

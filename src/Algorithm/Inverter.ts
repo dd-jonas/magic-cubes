@@ -1,5 +1,5 @@
 import {
-  AST,
+  AlgorithmNode,
   createAlgorithm,
   createCommutator,
   createConjugate,
@@ -16,9 +16,9 @@ import { Turn } from './Turn';
  */
 
 class Inverter {
-  ast: AST;
+  ast: AlgorithmNode;
 
-  constructor(ast: AST) {
+  constructor(ast: AlgorithmNode) {
     this.ast = ast;
   }
 
@@ -44,11 +44,11 @@ class Inverter {
   }
 
   run() {
-    this.ast = this.invertNode(this.ast) as AST;
+    this.ast = this.invertNode(this.ast) as AlgorithmNode;
   }
 }
 
-export const invert = (ast: AST) => {
+export const invert = (ast: AlgorithmNode) => {
   const inverter = new Inverter(ast);
   inverter.run();
 

@@ -1,14 +1,14 @@
 import structuredClone from '@ungap/structured-clone';
 
-import { AST, Node, NodeTypes } from './Nodes';
+import { AlgorithmNode, Node, NodeTypes } from './Nodes';
 import { cleaner, rotationlessSequencer, sequencer, validator, Visitor } from './visitors';
 
 class Traverser {
   private visitor: Visitor;
 
-  ast: AST;
+  ast: AlgorithmNode;
 
-  constructor(ast: AST, visitor: Visitor) {
+  constructor(ast: AlgorithmNode, visitor: Visitor) {
     this.visitor = visitor;
     this.ast = structuredClone(ast);
   }
@@ -46,14 +46,15 @@ class Traverser {
   }
 }
 
-export const traverse = (ast: AST, visitor: Visitor) => {
+export const traverse = (ast: AlgorithmNode, visitor: Visitor) => {
   const traverser = new Traverser(ast, visitor);
   traverser.run();
 
   return traverser.ast;
 };
 
-export const clean = (ast: AST) => traverse(ast, cleaner);
-export const sequence = (ast: AST) => traverse(ast, sequencer);
-export const rotationless = (ast: AST) => traverse(traverse(ast, sequencer), rotationlessSequencer);
-export const validate = (ast: AST) => traverse(ast, validator);
+export const clean = (ast: AlgorithmNode) => traverse(ast, cleaner);
+export const sequence = (ast: AlgorithmNode) => traverse(ast, sequencer);
+export const rotationless = (ast: AlgorithmNode) =>
+  traverse(traverse(ast, sequencer), rotationlessSequencer);
+export const validate = (ast: AlgorithmNode) => traverse(ast, validator);
