@@ -60,7 +60,7 @@ class Lexer {
     },
     {
       type: TokenTypes.Multiplier,
-      match: `(?<=\\))\\d+`,
+      match: `\\d+`,
     },
   ];
   input: string;
@@ -75,7 +75,7 @@ class Lexer {
 
     // Combine the grammar rules to a single RegExp
     this.regex = new RegExp(
-      this.grammar.map((definition) => `(${definition.match})`).join('|'),
+      this.grammar.map((definition) => `(?<${definition.type}>${definition.match})`).join('|'),
       'g'
     );
   }
@@ -89,10 +89,10 @@ class Lexer {
 
       if (!match || match.index !== this.cursor) return null;
 
-      const { type } = this.grammar[match.indexOf(match[0], 1) - 1];
-      const value = match[0];
-      const length = value.length;
+      const groups = Object.entries(match.groups!);
+      const [type, value] = groups.find(([, value]) => value !== undefined) as [TokenTypes, string];
 
+      const length = value.length;
       this.cursor += length;
 
       yield { type, value };

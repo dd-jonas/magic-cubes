@@ -72,7 +72,7 @@ export class Algorithm {
         // Use small letters as wide turn notation
         .replace(/([UFRDBL])w/g, (match, turn) => turn.toLowerCase())
         // Remove *'s of repeating groups
-        .replace(/(?<=\))\*(?=\d)/g, '')
+        .replace(/\)\*(?=\d)/g, ')')
     );
   }
 
