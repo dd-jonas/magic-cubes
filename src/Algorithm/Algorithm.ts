@@ -25,6 +25,10 @@ export class Algorithm {
     this.ast = ast;
   }
 
+  get parsed(): string {
+    return generate(this.ast);
+  }
+
   get clean(): string {
     const cleaned = clean(this.ast);
     return generate(cleaned);
@@ -67,8 +71,6 @@ export class Algorithm {
         .replace(/2'|'2/g, '2')
         // Use small letters as wide turn notation
         .replace(/([UFRDBL])w/g, (match, turn) => turn.toLowerCase())
-        // Remove parentheses that are not followed by a digit
-        .replace(/\(([^()]*)\)(?!\*?\d)/g, '$1')
         // Remove *'s of repeating groups
         .replace(/(?<=\))\*(?=\d)/g, '')
     );

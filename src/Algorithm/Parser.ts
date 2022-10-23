@@ -225,15 +225,12 @@ class Parser {
 
     token = this.nextToken();
 
-    if (!token || token.type !== TokenTypes.Multiplier) {
-      this.createError('Repeating group must be followed by a multiplier.');
-      this.restoreCheckpoint(checkpoint);
-      return;
-    }
+    const hasMultiplier = token?.type === TokenTypes.Multiplier;
+    token = hasMultiplier ? token! : { type: TokenTypes.Multiplier, value: '1' };
 
     node.multiplier = Number(token.value);
 
-    this.nextToken();
+    hasMultiplier && this.nextToken();
 
     return node;
   }

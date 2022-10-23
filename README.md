@@ -181,7 +181,6 @@ new Algorithm(alg);
     - Prime characters (`'`, `’` and `′`) will be converted to `'`.
     - Double prime turns (`2'` or `'2`) will be converted to `2`.
     - Wide move notation with `w` will be converted to lowercase (e.g. `Fw` becomes `f`).
-    - Parentheses without multiplier will be removed (e.g. `F (R U R' U') F'` becomes `F R U R' U' F'`).
     - Asterisks before multipliers will be removed (e.g. `(M U)*4` becomes `(M U)4`).
   - Throws a descriptive error when the string is invalid.
 
@@ -189,24 +188,28 @@ new Algorithm(alg);
 
 - `raw: string`
   - The original string input.
+- `parsed: string`
+  - String representation of the parsed input
+  - Can be useful for debugging. In most other cases, `clean` is preferred.
 - `clean: string`
   - Cleaned up version of the input.
   - Normalizes spacing.
   - Merges multiple turns (e.g. `R R` becomes `R2`).
   - Removes repeating group with a multiplier of `0`.
-  - Converts repeating groups with a multiplier of `1` to a sequence.
-  - Etc.
-- `inverse`
+  - Converts repeating groups with a multiplier of `1` to a sequence.  
+    This includes parentheses without multiplier (e.g. `F (R U R' U') F'` becomes `F R U R' U' F'`).
+  - Applies multiplier to a single turn (e.g. `(R)3` becomes `R'`)
+- `inverse: string`
   - Inverse of the input.
-- `sequence`
+- `sequence: string`
   - A sequenced version of the input.
-  - Converts commutators, conjugates and repeating groups.
-- `rotationless`
+  - Flattens commutators, conjugates and repeating groups.
+- `rotationless: string`
   - A sequenced, rotationless version of the input.
   - Translates rotations, wide turns and slice turns to face turns.
 - `turns: TurnNode[]`
   - Array of turn nodes after sequencing the algorithm.
-  - Used by `Cube` when applying an algorithm. Shouldn't need to be called directly.
+  - Used by `Cube` when applying an algorithm. Shouldn't need to be accessed directly.
 
 ## Roadmap
 

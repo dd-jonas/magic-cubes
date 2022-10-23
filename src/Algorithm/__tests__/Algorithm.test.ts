@@ -32,6 +32,22 @@ describe.concurrent('Algorithm constructor', () => {
     assert.equal(alg.clean, "(r U)2 R2 U'");
   });
 
+  it('parses the input', () => {
+    const input = "F (R U R' U') F' (R)3";
+
+    const alg = new Algorithm(input);
+
+    assert.equal(alg.parsed, "F (R U R' U')1 F' (R)3");
+  });
+
+  it('cleans the input', () => {
+    const input = "F (R U R' U')1 F' (R)3";
+
+    const alg = new Algorithm(input);
+
+    assert.equal(alg.clean, "F R U R' U' F' R'");
+  });
+
   it('inverses the input', () => {
     const input = "[r U r', D2]";
 

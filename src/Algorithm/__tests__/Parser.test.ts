@@ -99,6 +99,52 @@ describe.concurrent('Parser', () => {
     );
   });
 
+  it('parses a sequence with brackets', () => {
+    const ast = parse([
+      { type: TokenTypes.ParenthesisOpen, value: '(' },
+      { type: TokenTypes.Turn, value: 'R' },
+      { type: TokenTypes.Turn, value: 'U' },
+      { type: TokenTypes.ParenthesisClose, value: ')' },
+
+      { type: TokenTypes.ParenthesisOpen, value: '(' },
+      { type: TokenTypes.Turn, value: "R'" },
+      { type: TokenTypes.Turn, value: "U'" },
+
+      { type: TokenTypes.ParenthesisOpen, value: '(' },
+      { type: TokenTypes.BracketOpen, value: '[' },
+      { type: TokenTypes.Turn, value: 'M' },
+      { type: TokenTypes.SeperatorCommutator, value: ',' },
+      { type: TokenTypes.Turn, value: 'U2' },
+      { type: TokenTypes.BracketClose, value: ']' },
+      { type: TokenTypes.ParenthesisClose, value: ')' },
+
+      { type: TokenTypes.ParenthesisOpen, value: '(' },
+      { type: TokenTypes.Turn, value: 'R' },
+      { type: TokenTypes.Turn, value: 'U' },
+      { type: TokenTypes.Turn, value: "R'" },
+      { type: TokenTypes.Turn, value: "U'" },
+      { type: TokenTypes.ParenthesisClose, value: ')' },
+      { type: TokenTypes.Multiplier, value: '6' },
+
+      { type: TokenTypes.ParenthesisClose, value: ')' },
+    ]);
+
+    assert.deepEqual(
+      ast,
+      alg([
+        rep(seq([turn('R', CW), turn('U', CW)]), 1),
+        rep(
+          [
+            seq([turn('R', CCW), turn('U', CCW)]),
+            rep(comm(seq(turn('M', CW)), seq(turn('U', Double))), 1),
+            rep(seq([turn('R', CW), turn('U', CW), turn('R', CCW), turn('U', CCW)]), 6),
+          ],
+          1
+        ),
+      ])
+    );
+  });
+
   it('parses complex algorithm (conjugate with nested commutator)', () => {
     const ast = parse([
       { type: TokenTypes.BracketOpen, value: '[' },
@@ -258,15 +304,5 @@ describe.concurrent('Parser', () => {
     assert.throws(() => parse(tokens1), /left side of conjugate/i);
     assert.throws(() => parse(tokens2), /right side of commutator/i);
     assert.throws(() => parse(tokens3), /repeating group/i);
-  });
-
-  it('throws when encountering missing multiplier', () => {
-    const tokens = [
-      { type: TokenTypes.ParenthesisOpen, value: '(' },
-      { type: TokenTypes.Turn, value: 'U' },
-      { type: TokenTypes.ParenthesisClose, value: ')' },
-    ];
-
-    assert.throws(() => parse(tokens), /repeating group must be followed by a multiplier/i);
   });
 });
