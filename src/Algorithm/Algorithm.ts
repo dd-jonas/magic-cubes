@@ -66,11 +66,11 @@ export class Algorithm {
         // Remove prime characters from double turns
         .replace(/2'|'2/g, '2')
         // Use small letters as wide turn notation
-        .replace(/([UFRDBL])w/, (match, turn) => turn.toLowerCase())
+        .replace(/([UFRDBL])w/g, (match, turn) => turn.toLowerCase())
         // Remove parentheses that are not followed by a digit
         .replace(/\(([^()]*)\)(?!\*?\d)/g, '$1')
         // Remove *'s of repeating groups
-        .replace(/(?<=\))\*(?=\d)/, '')
+        .replace(/(?<=\))\*(?=\d)/g, '')
     );
   }
 
